@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "770050715504",
+    "project_id": "sataaking-1b81c",
+    "storage_bucket": "sataaking-1b81c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770050715504:android:5b871cba19fdb7ec4429b5",
+        "android_client_info": {
+          "package_name": "com.betting_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2ujLSr-XfDV-_MraeXx_PmEdJ-SJH2Rg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
