@@ -42,43 +42,38 @@ const columns = [
 const ScrollableTable = () => {
     const headerScrollViewRef = useRef(null);
     const dataScrollViewRef = useRef(null);
-    const [scrollPosition, setScrollPosition] = useState(0);
-
-    const handleScroll = (event) => {
-        const newScrollPosition = event.nativeEvent.contentOffset.x;
-        setScrollPosition(newScrollPosition);
-
-        if (headerScrollViewRef.current) {
-            headerScrollViewRef.current.scrollTo({ x: newScrollPosition, animated: false });
-        }
-        if (dataScrollViewRef.current) {
-            dataScrollViewRef.current.scrollTo({ x: newScrollPosition, animated: false });
-        }
-    };
 
     const renderHeader = () => (
-        <ScrollView
-            ref={headerScrollViewRef}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            scrollEnabled={false}
-        >
-            {columns.map((column) => (
-                <View key={column.key} style={[styles.headerCell, { width: column.width }]}>
-                    <Text style={styles.headerText}>{column.title}</Text>
-                </View>
-            ))}
-        </ScrollView>
+        <View style={styles.headerRow}>
+            <View style={[styles.stickyHeaderCell, { width: columns[0].width }]}>
+                <Text style={styles.headerText}>{columns[0].title}</Text>
+            </View>
+            <ScrollView
+                ref={headerScrollViewRef}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                scrollEnabled={false}
+            >
+                {columns.slice(1).map((column) => (
+                    <View key={column.key} style={[styles.headerCell, { width: column.width }]}>
+                        <Text style={styles.headerText}>{column.title}</Text>
+                    </View>
+                ))}
+            </ScrollView>
+        </View>
     );
 
     const renderRow = (rowData, index) => (
         <View key={index} style={styles.row}>
+            <View style={[styles.stickyCell, { width: columns[0].width }]}>
+                <Text style={styles.cellText}>{rowData[columns[0].key]}</Text>
+            </View>
             <ScrollView
-                horizontal={true}
+                horizontal
                 showsHorizontalScrollIndicator={false}
                 scrollEnabled={false}
             >
-                {columns.map((column) => (
+                {columns.slice(1).map((column) => (
                     <View key={column.key} style={[styles.cell, { width: column.width }]}>
                         <Text style={styles.cellText}>{rowData[column.key]}</Text>
                     </View>
@@ -87,19 +82,42 @@ const ScrollableTable = () => {
         </View>
     );
 
+    const handleScroll = (event) => {
+        const newScrollPosition = event.nativeEvent.contentOffset.x;
+        headerScrollViewRef.current?.scrollTo({ x: newScrollPosition, animated: false });
+    };
+
     return (
         <View style={styles.container}>
-            <View style={styles.headerContainer}>{renderHeader()}</View>
-            <ScrollView
-                ref={dataScrollViewRef}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                onScroll={handleScroll}
-                scrollEventThrottle={16}
-            >
-                <ScrollView>
-                    {data.map((rowData, index) => renderRow(rowData, index))}
-                </ScrollView>
+            {renderHeader()}
+            <ScrollView>
+                <View style={styles.tableContainer}>
+                    <View style={styles.stickyColumn}>
+                        {data.map((rowData, index) => (
+                            <View key={index} style={[styles.stickyCell, { width: columns[0].width }]}>
+                                <Text style={[styles.cellText, { color: "#FFD700" }]}>{rowData[columns[0].key]}</Text>
+                            </View>
+                        ))}
+                    </View>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        onScroll={handleScroll}
+                        scrollEventThrottle={16}
+                    >
+                        <View>
+                            {data.map((rowData, index) => (
+                                <View key={index} style={styles.row}>
+                                    {columns.slice(1).map((column) => (
+                                        <View key={column.key} style={[styles.cell, { width: column.width }]}>
+                                            <Text style={styles.cellText}>{rowData[column.key]}</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            ))}
+                        </View>
+                    </ScrollView>
+                </View>
             </ScrollView>
         </View>
     );
@@ -110,35 +128,66 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#1E1E1E',
     },
-    headerContainer: {
-        backgroundColor: '#2C2C2C',
+    tableContainer: {
+        flexDirection: 'row',
     },
-    headerCell: {
-        padding: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
+    headerRow: {
+        flexDirection: 'row',
+        backgroundColor: '#3D3D3D',
+        borderBottomWidth: 1,
+        borderBottomColor: '#2C2C2C',
+    },
+    stickyColumn: {
+        backgroundColor: '#1E1E1E',
         borderRightWidth: 1,
         borderRightColor: '#3D3D3D',
-    },
-    headerText: {
-        color: '#FFD700',
-        fontWeight: 'bold',
+        zIndex: 1,
     },
     row: {
         flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderBottomColor: '#2C2C2C',
     },
-    cell: {
+    headerCell: {
         padding: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
+        borderRightWidth: 1,
+        borderRightColor: '#3D3D3D',
+        backgroundColor: '#2C2C2C',
+        borderBottomWidth: 1,
+        borderBottomColor: '#3D3D3D',
+    },
+    stickyHeaderCell: {
+        padding: 10,
+        backgroundColor: '#2C2C2C',
         borderRightWidth: 1,
         borderRightColor: '#3D3D3D',
         borderBottomWidth: 1,
         borderBottomColor: '#3D3D3D',
+        zIndex: 2,
+    },
+    cell: {
+        padding: 10,
+        borderRightWidth: 1,
+        borderRightColor: '#2C2C2C',
+        justifyContent: 'center',
+    },
+    stickyCell: {
+        padding: 10,
+        backgroundColor: '#2C2C2C',
+        borderRightWidth: 1,
+        borderRightColor: '#3D3D3D',
+        justifyContent: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#3D3D3D',
+    },
+    headerText: {
+        fontWeight: 'bold',
+        color: '#FFD700',
     },
     cellText: {
+        fontWeight: 'bold',
+        textAlign: 'center',
         color: '#FFFFFF',
     },
 });
-
 export default ScrollableTable;

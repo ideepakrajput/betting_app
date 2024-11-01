@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
 import {
     View,
@@ -6,10 +7,12 @@ import {
     TouchableOpacity,
     ScrollView,
     StyleSheet,
-    Alert,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { OpenPlayBets } from '../services/endPoints';
+import { updateBalance } from '../redux/slices/userSlice';
 
-const OpenPlayTab = () => {
+const OpenPlayTab = ({ game_id, setAlert }) => {
     const [regularNumbers, setRegularNumbers] = useState('');
     const [harupNumbers, setHarupNumbers] = useState('');
     const [regularAmount, setRegularAmount] = useState('');
@@ -19,7 +22,11 @@ const OpenPlayTab = () => {
     const [baharSelected, setBaharSelected] = useState(false);
     const [combinations, setCombinations] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
-    const [activeInput, setActiveInput] = useState('regular'); // 'regular' or 'harup'
+    const [activeInput, setActiveInput] = useState('regular');
+    const { user } = useSelector(state => state.user);
+    const wallet_balance = user?.wallet_balance;
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
 
     const reversePair = pair => pair.split('').reverse().join('');
 
@@ -176,19 +183,52 @@ const OpenPlayTab = () => {
         }
     };
 
-    const handlePlaceBet = () => {
-        const betDetails = combinations
-            .map(item => `${item.number}${item.suffix || ''} = Rs ${item.amount}`)
-            .join('\n');
-        Alert.alert('Bet Details', `${betDetails}\n\nTotal: Rs ${totalAmount}`);
+    const handlePlaceBet = async () => {
+        const updatedBalance = wallet_balance - totalAmount;
+        if (totalAmount <= 0) {
+            setAlert({
+                message: 'Please place a valid bet.',
+                type: 'error',
+            });
+            return;
+        }
+        if (totalAmount > wallet_balance) {
+            setAlert({
+                message: 'You do not have enough balance to place this bet.',
+                type: 'error',
+            });
+            setTimeout(() => {
+                navigation.navigate('WalletDetails');
+            }, 2000);
+            return;
+        }
+        else {
+            console.log(combinations);
+            const response = await OpenPlayBets({ bazaarId: game_id, withPalti, harupA: andarSelected, harupB: baharSelected, data: combinations });
+            if (response.success) {
+                dispatch(updateBalance(updatedBalance));
+                setAlert({
+                    message: 'Bet placed successfully.',
+                    type: 'success',
+                });
+            } else {
+                setAlert({
+                    message: response.message,
+                    type: 'error',
+                });
+            }
+            setCombinations([]);
+        }
     };
 
     return (
-        <ScrollView style={styles.container}>
-            {renderInputSection('regular')}
-            {renderInputSection('harup')}
+        <View style={styles.container}>
+            <View style={styles.inputSection}>
+                {renderInputSection('regular')}
+                {renderInputSection('harup')}
+            </View>
 
-            <View style={styles.combinationsContainer}>
+            <ScrollView style={styles.combinationsContainer}>
                 {combinations.map((item, index) => (
                     <View key={index} style={styles.combinationRow}>
                         <Text style={styles.combinationText}>
@@ -202,7 +242,7 @@ const OpenPlayTab = () => {
                         </TouchableOpacity>
                     </View>
                 ))}
-            </View>
+            </ScrollView>
 
             <View style={styles.footer}>
                 <View style={styles.totalContainer}>
@@ -215,12 +255,13 @@ const OpenPlayTab = () => {
                     <Text style={styles.placeBetText}>PLACE BET</Text>
                 </TouchableOpacity>
             </View>
-        </ScrollView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#000' },
+    // inputSection: { padding: 16, backgroundColor: '#111' },
     inputContainer: {
         paddingHorizontal: 8,
         paddingVertical: 4,
@@ -268,6 +309,7 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     combinationsContainer: {
+        flex: 1,
         paddingVertical: 12,
         paddingHorizontal: 24,
         borderTopWidth: 2,
@@ -290,16 +332,16 @@ const styles = StyleSheet.create({
         borderRadius: 50,
     },
     footer: {
+        paddingTop: 16,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 16,
         borderTopWidth: 2,
         borderTopColor: '#FFD700',
     },
     totalContainer: { alignItems: 'center' },
     totalLabel: { color: '#FFD700', fontSize: 20 },
-    totalAmount: { color: '#FFD700', fontSize: 24, fontWeight: 'bold' },
+    totalAmount: { color: '#FFD700', fontSize: 20 },
     placeBetButton: {
         backgroundColor: '#FFD700',
         padding: 12,

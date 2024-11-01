@@ -19,7 +19,6 @@ const WalletScreen = () => {
 
     const handleRefresh = async () => {
         const userResponse = await me();
-        console.log(userResponse, "jhvjg");
 
         dispatch(setUser(userResponse?.user));
         setTransactions(userResponse?.user?.transactions);

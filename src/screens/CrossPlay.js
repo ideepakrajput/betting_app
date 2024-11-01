@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
 import {
     View,
@@ -6,15 +7,21 @@ import {
     StyleSheet,
     SafeAreaView,
     TextInput,
-    TouchableOpacity,
-    Alert
+    TouchableOpacity
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateBalance } from '../redux/slices/userSlice';
+import { CrossPlayBets } from '../services/endPoints';
 
-const CrossPlay = () => {
+const CrossPlay = ({ game_id, setAlert }) => {
     const [inputNumber, setInputNumber] = useState('');
     const [betAmount, setBetAmount] = useState('');
     const [combinations, setCombinations] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
+    const { user } = useSelector(state => state.user);
+    const wallet_balance = user?.wallet_balance;
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
 
     const validateAndGenerateCombinations = (number) => {
         // Convert number to array of digits
@@ -22,8 +29,10 @@ const CrossPlay = () => {
 
         // Check for duplicate digits
         if (new Set(digits).size !== digits.length) {
-            Alert.alert('Error', 'Duplicate digits are not allowed!');
-            return false;
+            setAlert({
+                type: 'error',
+                message: 'Duplicate digits are not allowed.'
+            });
         }
 
         // Generate all possible 2-digit combinations
@@ -73,6 +82,44 @@ const CrossPlay = () => {
         </View>
     );
 
+    const handlePlaceBet = async () => {
+        const updatedBalance = wallet_balance - totalAmount;
+        if (totalAmount <= 0) {
+            setAlert({
+                message: 'Please place a valid bet.',
+                type: 'error',
+            });
+            return;
+        }
+        if (totalAmount > wallet_balance) {
+            setAlert({
+                message: 'You do not have enough balance to place this bet.',
+                type: 'error',
+            });
+            setTimeout(() => {
+                navigation.navigate('WalletDetails');
+            }, 2000);
+            return;
+        }
+        else {
+            console.log(combinations);
+            const response = await CrossPlayBets({ bazaarId: game_id, data: combinations, betAmount });
+            if (response.success) {
+                dispatch(updateBalance(updatedBalance));
+                setAlert({
+                    message: 'Bet placed successfully.',
+                    type: 'success',
+                });
+            } else {
+                setAlert({
+                    message: response.message,
+                    type: 'error',
+                });
+            }
+            setCombinations([]);
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             {/* Input Section */}
@@ -119,7 +166,7 @@ const CrossPlay = () => {
                 </View>
                 <TouchableOpacity
                     style={styles.placeBetButton}
-                    onPress={() => Alert.alert('Success', `Bet placed: Rs ${totalAmount}`)}
+                    onPress={() => handlePlaceBet()}
                 >
                     <Text style={styles.buttonText}>PLACE BET</Text>
                 </TouchableOpacity>
@@ -207,8 +254,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        borderTopWidth: 1,
-        // marginTop: 16,
+        borderTopWidth: 2,
+        paddingTop: 16,
         borderTopColor: '#FFD700',
         backgroundColor: '#000',
     },

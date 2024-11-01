@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert, Share } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Share, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
@@ -17,7 +17,6 @@ import Rules from '../screens/Rules';
 import ReferAndEarn from '../screens/ReferAndEarn';
 import WalletScreen from '../screens/WalletScreen';
 import SupportScreen from '../screens/Supports';
-import BidHistory from '../screens/BidHistory';
 import Chart from '../screens/Chart';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
@@ -33,6 +32,8 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import NotificationToggle from '../components/NotificationToggle';
 import { me } from '../services/endPoints';
 import GamePlay from '../screens/GamePlay';
+import SplashScreen from '../screens/SplashScreen';
+import BetHistory from '../screens/BetHistory';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -46,7 +47,10 @@ const CustomHeader = ({ navigation }) => {
             <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
                 <AntIcon name="menu-fold" size={24} color="#FFD700" />
             </TouchableOpacity>
-            <Text style={styles.logo}>LOGO</Text>
+            <Image
+                source={require('../assets/logo1.jpeg')}
+                style={styles.logo}
+            />
             <TouchableOpacity onPress={() => navigation.navigate('WalletDetails')}>
                 <View style={styles.walletContainer}>
                     <Icon name="account-balance-wallet" size={24} color="#FFD700" />
@@ -133,7 +137,7 @@ const WalletStack = () => (
 
 const BidHistoryStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="BidHistoryScreen" component={BidHistory} />
+        <Stack.Screen name="BetHistoryScreen" component={BetHistory} />
     </Stack.Navigator>
 );
 
@@ -168,12 +172,15 @@ const MainTabNavigator = () => (
 const DrawerContent = (props) => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
+    const navigation = useNavigation();
     const handleLogout = async () => {
         await AsyncStorage.removeItem('token');
         await AsyncStorage.removeItem('user');
-        dispatch(logout());
         dispatch(setUser(null));
-        await props.navigation.navigate('Login');
+        dispatch(logout());
+        navigation.navigate('Login');
+        console.log("TEsat");
+
     };
     const copyToClipboard = () => {
         Clipboard.setString(user?.user?.ref_id);
@@ -220,7 +227,7 @@ const DrawerContent = (props) => {
         <View style={styles.drawerContent}>
             <View style={[styles.drawerHeader, { paddingVertical: 15 }]}>
                 <View>
-                    <Text style={styles.logo}>Profile</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: "#FFD700" }}>Profile</Text>
                 </View>
                 <View>
                     <AntIcon name="menu-unfold" size={24} color="#FFD700" onPress={() => props.navigation.toggleDrawer()} />
@@ -228,7 +235,13 @@ const DrawerContent = (props) => {
             </View>
             <View style={[styles.drawerHeader, { backgroundColor: "#101010" }]}>
                 <View>
-                    <Text style={styles.logo}>LOGO</Text>
+                    <Image
+                        source={require('../assets/logo1.jpeg')}
+                        style={[styles.logo, {
+                            width: 100,
+                            height: 100,
+                        }]}
+                    />
                 </View>
                 <View>
                     <Text style={styles.drawerHeaderText}>{user?.user?.name || "Test User"}</Text>
@@ -334,30 +347,44 @@ const getToken = async () => {
 };
 const AppNavigator = () => {
     const user = useSelector((state) => state.user);
+    const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
     const dispatch = useDispatch();
+
     useEffect(() => {
-        const fetchUserData = async () => {
-            const response = await me();
-            if (response.success) {
-                dispatch(setUser(response.user));
+        if (user.isLoggedIn) {
+            setIsLoggedIn(true);
+        } else {
+            setIsLoggedIn(false);
+        }
+    }, [dispatch, user]);
+
+    useEffect(() => {
+        const initialize = async () => {
+            try {
+                const token = await getToken();
+                if (token) {
+                    const response = await me();
+                    if (response.success) {
+                        dispatch(setUser(response.user));
+                        setIsLoggedIn(true);
+                    }
+                } else {
+                    setIsLoggedIn(false);
+                }
+            } catch (error) {
+                console.log('Initialization error:', error);
+            } finally {
+                setIsLoading(false);
             }
         };
-        fetchUserData();
+
+        initialize();
     }, [dispatch]);
 
-    useEffect(() => {
-        const checkLoginStatus = async () => {
-            const token = await getToken();
-            if (token) {
-                setIsLoggedIn(true);
-            } else {
-                setIsLoggedIn(false);
-            }
-        };
-        checkLoginStatus();
-    }, [user]);
+    if (isLoading) {
+        return <SplashScreen />;
+    }
 
     return (
         <NavigationContainer>
@@ -365,7 +392,6 @@ const AppNavigator = () => {
         </NavigationContainer>
     );
 };
-
 const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
@@ -373,11 +399,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 15,
         backgroundColor: '#000000',
-    },
-    logo: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#FFD700',
     },
     walletContainer: {
         flexDirection: 'row',
@@ -440,6 +461,11 @@ const styles = StyleSheet.create({
         color: '#FFD700',
         fontSize: 16,
         marginLeft: 10,
+    },
+    logo: {
+        width: 50,
+        height: 50,
+        resizeMode: 'contain',
     },
 });
 

@@ -1,7 +1,6 @@
 import apiClient from "./apiClient";
 
 const handleResponse = (response) => {
-    console.log(response, "response");
 
     if (response.status >= 200 && response.status < 300) {
         return response.data;
@@ -26,12 +25,8 @@ export const login = async (credentials) => {
 export const register = async (userData) => {
     try {
         const response = await apiClient.post('api/user/register', userData);
-        console.log(response, "responseu");
-
         return handleResponse(response);
     } catch (error) {
-        console.log(response, error, "responseu");
-
         throw handleResponse(error.response);
     }
 };
@@ -98,3 +93,48 @@ export const withdrawMoney = async (amount) => {
         throw handleResponse(error.response);
     }
 };
+
+export const getBazaars = async () => {
+    try {
+        const response = await apiClient.get('api/user/bazaars');
+        return handleResponse(response);
+    } catch (error) {
+        throw handleResponse(error.response);
+    }
+};
+
+export const jantariBets = async (betsData) => {
+    try {
+        const response = await apiClient.post('api/bet/jantari', betsData);
+        return handleResponse(response);
+    } catch (error) {
+        throw handleResponse(error.message);
+    }
+}
+
+export const OpenPlayBets = async (betsData) => {
+    try {
+        const response = await apiClient.post('api/bet/open-play', betsData);
+        return handleResponse(response);
+    } catch (error) {
+        throw handleResponse(error.message);
+    }
+}
+
+export const CrossPlayBets = async (betsData) => {
+    try {
+        const response = await apiClient.post('api/bet/cross', betsData);
+        return handleResponse(response);
+    } catch (error) {
+        throw handleResponse(error.message);
+    }
+}
+
+export const getBetHistory = async () => {
+    try {
+        const response = await apiClient.get('api/user/bet-history');
+        return handleResponse(response);
+    } catch (error) {
+        throw handleResponse(error.message);
+    }
+}

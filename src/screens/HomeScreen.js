@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
@@ -8,10 +8,16 @@ import { StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
-
+import { getBazaars } from '../services/endPoints';
 const HomeScreen = () => {
     const user = useSelector(state => state.user);
     const navigation = useNavigation();
+    const [bazaars, setBazaars] = useState([]);
+    const [liveResults, setLiveResults] = useState([]);
+    const [liveGames, setLiveGames] = useState([]);
+    const [upcomingGames, setUpcomingGames] = useState([]);
+    const [lastResults, setLastResults] = useState([]);
+
     async function requestUserPermission() {
         const authStatus = await messaging().requestPermission();
         const enabled =
@@ -42,6 +48,48 @@ const HomeScreen = () => {
             }
         }
     };
+
+    useEffect(() => {
+        getBazaarData();
+    }, []);
+
+    const getBazaarData = async () => {
+        try {
+            const response = await getBazaars();
+            const currentTime = new Date();
+            currentTime.setHours(currentTime.getHours() - 1);
+            const currentTimeString = new Date();
+
+            const categorizedGames = response.data.reduce((acc, game) => {
+                const [openHour, openMinute] = game.open_time.split(':').map(Number);
+                const [closeHour, closeMinute] = game.close_time.split(':').map(Number);
+                const [resultHour, resultMinute] = game.result_time.split(':').map(Number);
+                const openTime = new Date(currentTimeString.setHours(openHour, openMinute, 0, 0));
+                const closeTime = new Date(currentTimeString.setHours(closeHour, closeMinute, 0, 0));
+                const resultTime = new Date(currentTimeString.setHours(resultHour, resultMinute, 0, 0));
+
+                if (resultTime <= currentTime) {
+                    acc.liveResults.push(game);
+                } else if (openTime <= currentTime && currentTime <= closeTime) {
+                    acc.liveGames.push(game);
+                } else if (currentTime < openTime) {
+                    acc.liveGames.push(game);
+                } else if (currentTime < resultTime) {
+                    acc.lastResults.push(game);
+                }
+                return acc;
+            }, { liveResults: [], liveGames: [], upcomingGames: [], lastResults: [] });
+
+            setLiveResults(categorizedGames.liveResults);
+            setLiveGames(categorizedGames.liveGames);
+            setUpcomingGames(categorizedGames.upcomingGames);
+            setLastResults(categorizedGames.lastResults);
+        } catch (error) {
+            console.error('Error fetching bazaars:', error);
+        }
+    };
+
+
 
     return (
         <View style={styles.container}>
@@ -92,34 +140,66 @@ const HomeScreen = () => {
                     Withdraw
                 </Button>
             </View>
-
             <ScrollView style={styles.scrollView}>
-                <View style={styles.gameCard}>
-                    <View>
-                        <Text style={styles.gameName}>GAZIYABAD</Text>
-                        <Text style={styles.gameStatus}>Betting Is Closed. Result Will Announce Soon</Text>
-                    </View>
-                    <View>
-                        <Button mode="contained" disabled style={styles.waitButton}>Wait</Button>
-                    </View>
+                {/* Live Results Section */}
+                <Text style={styles.categoryHeader}>Live Results</Text>
+                {/* {liveResults.map((game) => ( */}
+                <View key={liveResults[0]?._id} style={styles.gameCard}>
+                    <Text style={styles.gameName}>{liveResults[0]?.name}</Text>
+                    <Text style={styles.gameResult}>{liveResults[0]?.result || 77}</Text>
                 </View>
+                {/* ))} */}
 
-                <View style={styles.gameCard}>
-                    <Text style={styles.gameName}>DUBAI BAZAR</Text>
-                    <Text style={styles.timeInfo}>Close Time: 22:45 | Result Time: 23:00</Text>
-                    <Button mode="contained" style={styles.playButton} onPress={() => navigation.navigate("GamePlay", { name: `DUBAI BAZAR` })}>Play</Button>
-                </View>
+                {/* Live Games Section */}
+                <Text style={styles.categoryHeader}>Live Games</Text>
+                {liveGames.map((game) => (
+                    <View key={game._id} style={styles.gameCard}>
+                        <View>
+                            <Text style={styles.gameName}>{game.name}</Text>
+                            <Text style={styles.timeInfo}>
+                                Open: {(game.open_time)} |
+                                Close: {(game.close_time)} |
+                                Result: {(game.result_time)}
+                            </Text>
+                        </View>
+                        <View>
+                            <Button
+                                mode="contained"
+                                textColor='black'
+                                style={styles.playButton}
+                                onPress={() => navigation.navigate("GamePlay", { name: game.name, game_id: game._id })}
+                            >
+                                Play
+                            </Button>
+                        </View>
+                    </View>
+                ))}
 
-                <View style={styles.gameCard}>
-                    <Text style={styles.gameName}>PUNE CITY</Text>
-                    <Text style={styles.timeInfo}>Close Time: 00:25 | Result Time: 00:30</Text>
-                    <Button mode="contained" style={styles.playButton} onPress={() => navigation.navigate("GamePlay", { name: "PUNE CITY" })}>Play</Button>
-                </View>
+                {/* Upcoming Games Section */}
+                <Text style={styles.categoryHeader}>Upcoming Games</Text>
+                {upcomingGames.map((game) => (
+                    <View key={game._id} style={[styles.gameCard, {}]}>
+                        <View>
+                            <Text style={styles.gameName}>{game.name}</Text>
+                            <Text style={styles.timeInfo}>Open Time : {game.open_time}</Text>
+                            <Text style={styles.timeInfo}>Close Time : {game.close_time}</Text>
+                            <Text style={styles.timeInfo}>Result Time : {game.result_time}</Text>
+                        </View>
+                    </View>
+                ))}
+
+                {/* Last Results Section */}
+                <Text style={styles.categoryHeader}>Previous Results</Text>
+                {lastResults.map((game) => (
+                    <View key={game._id} style={styles.gameCard}>
+                        <Text style={styles.gameName}>{game.name}</Text>
+                        <Text style={styles.gameResult}>{game.result || 77}</Text>
+                    </View>
+                ))}
             </ScrollView>
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -163,6 +243,9 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     gameCard: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         backgroundColor: '#333333',
         padding: 15,
         borderRadius: 10,
@@ -186,6 +269,7 @@ const styles = StyleSheet.create({
     },
     playButton: {
         backgroundColor: '#FFD700',
+        fontWeight: "bold"
     },
     waitButton: {
         backgroundColor: '#FFD700',
@@ -200,6 +284,23 @@ const styles = StyleSheet.create({
     navButton: {
         color: '#FFD700',
     },
+    categoryHeader: {
+        fontSize: 20,
+        color: '#FFD700',
+        fontWeight: 'bold',
+        marginVertical: 10,
+        paddingLeft: 5,
+    },
+    gameResult: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'black',
+        alignSelf: 'center',
+        backgroundColor: '#FFD700',
+        marginBottom: 5,
+        borderRadius: 20,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+    }
 });
-
 export default HomeScreen

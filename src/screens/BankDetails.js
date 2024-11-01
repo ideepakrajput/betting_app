@@ -66,9 +66,6 @@ const BankDetailsUpdateScreen = () => {
         if (!validateFields()) {
             return;
         }
-        console.log('====================================');
-        console.log(await AsyncStorage.getItem('token'));
-        console.log('====================================');
 
         const bankDetails = {
             beneficiary_name: beneficiaryName,

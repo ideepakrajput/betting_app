@@ -70,9 +70,6 @@ const LoginScreen = ({ navigation }) => {
                 const response = await login({ phone: phoneNumber, password });
 
                 if (response.success) {
-                    console.log('====================================');
-                    console.log(response);
-                    console.log('====================================');
                     // Successful login
                     await AsyncStorage.setItem('token', response.token);
                     await AsyncStorage.setItem('user', JSON.stringify(response.user));
