@@ -138,3 +138,12 @@ export const getBetHistory = async () => {
         throw handleResponse(error.message);
     }
 }
+
+export const getUPIDetails = async () => {
+    try {
+        const response = await apiClient.get('api/user/admin-upi');
+        return handleResponse(response);
+    } catch (error) {
+        throw handleResponse(error.message);
+    }
+}

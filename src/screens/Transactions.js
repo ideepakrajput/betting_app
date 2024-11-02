@@ -4,8 +4,9 @@ import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomAlert from '../components/CustomAlert';
-import { AddMoney, withdrawMoney } from '../services/endPoints';
+import { AddMoney, getUPIDetails, withdrawMoney } from '../services/endPoints';
 import { setUser } from '../redux/slices/userSlice';
+import { API_URL } from '../services/apiClient';
 
 const Transactions = ({ navigation, route }) => {
     const user = useSelector((state) => state.user);
@@ -17,11 +18,36 @@ const Transactions = ({ navigation, route }) => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertType, setAlertType] = useState('success');
     const [alertMessage, setAlertMessage] = useState('');
+    const [UPIDetails, setUPIDetails] = useState({ upi_id: '', upi_image: '' });
     const dispatch = useDispatch();
 
     useEffect(() => {
         setActiveTab(route?.params?.activeTab)
     }, [navigation])
+
+    const UPIData = async () => {
+        try {
+            const response = await getUPIDetails();
+            if (response.success) {
+                setUPIDetails({
+                    upi_id: response.admin.upi_id,
+                    upi_image: response.admin.upi_image,
+                })
+            } else {
+                setAlertType('error');
+                setAlertMessage(response.message);
+                setAlertVisible(true);
+                return
+            }
+        }
+        catch (error) {
+            console.error('Error verifying transaction:', error);
+        }
+    }
+
+    useEffect(() => {
+        UPIData()
+    }, [step])
 
     const handleTabChange = (newTab) => {
         setActiveTab(newTab);
@@ -220,8 +246,9 @@ const Transactions = ({ navigation, route }) => {
                     ) : (
                         <ScrollView>
                             <View style={styles.addMoneyContainer}>
-                                <Text style={[styles.heading, { textAlign: 'center', fontWeight: 'bold' }]}>PAY TO BELOW UPI</Text>
-                                <Image source={require('../assets/upi.jpg')} style={styles.upiImage} />
+                                <Text style={[styles.heading, { textAlign: 'center', fontWeight: 'bold', borderBottomColor: '#fff', borderBottomWidth: 1, alignSelf: 'center', marginBottom: 10 }]}>PAY TO BELOW UPI</Text>
+                                <Text style={[styles.heading, { textAlign: 'center', color: "#fff", fontWeight: 'bold' }]}>{UPIDetails.upi_id}</Text>
+                                <Image src={`${API_URL}${UPIDetails.upi_image}`} style={styles.upiImage} />
                                 <Text style={[styles.heading, { textAlign: 'center', fontWeight: 'bold' }]}>ENTER TRANSACTION DETAILS</Text>
                                 <TextInput
                                     placeholder="Transaction ID"

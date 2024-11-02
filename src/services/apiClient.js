@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const API_URL = 'https://server.sataking.co/'; // Ensure this URL is correct for the APK (change localhost to your local network IP if needed)
+export const API_URL = 'https://server.sataking.co/'; // Ensure this URL is correct for the APK (change localhost to your local network IP if needed)
 
 const apiClient = axios.create({
     baseURL: API_URL,
