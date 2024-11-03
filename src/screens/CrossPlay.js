@@ -7,7 +7,8 @@ import {
     StyleSheet,
     SafeAreaView,
     TextInput,
-    TouchableOpacity
+    TouchableOpacity,
+    ImageBackground
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateBalance } from '../redux/slices/userSlice';
@@ -121,64 +122,74 @@ const CrossPlay = ({ game_id, setAlert }) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            {/* Input Section */}
-            <View style={styles.inputContainer}>
-                <View style={styles.inputWrapper}>
-                    <TextInput
-                        value={inputNumber}
-                        onChangeText={handleNumberInput}
-                        keyboardType="numeric"
-                        style={styles.numberInput}
-                        placeholder="Enter Number"
-                        placeholderTextColor="#666"
-                    />
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <SafeAreaView style={styles.container}>
+                {/* Input Section */}
+                <View style={styles.inputContainer}>
+                    <View style={styles.inputWrapper}>
+                        <TextInput
+                            value={inputNumber}
+                            onChangeText={handleNumberInput}
+                            keyboardType="numeric"
+                            style={styles.numberInput}
+                            placeholder="Enter Number"
+                            placeholderTextColor="#666"
+                        />
+                    </View>
+                    <Text style={styles.equalMainText}>=</Text>
+                    <View style={styles.inputWrapper}>
+                        <TextInput
+                            value={betAmount}
+                            onChangeText={setBetAmount}
+                            keyboardType="numeric"
+                            style={styles.amountInput}
+                            placeholder="Amount"
+                            placeholderTextColor="#666"
+                        />
+                    </View>
                 </View>
-                <Text style={styles.equalMainText}>=</Text>
-                <View style={styles.inputWrapper}>
-                    <TextInput
-                        value={betAmount}
-                        onChangeText={setBetAmount}
-                        keyboardType="numeric"
-                        style={styles.amountInput}
-                        placeholder="Amount"
-                        placeholderTextColor="#666"
-                    />
-                </View>
-            </View>
 
-            {/* Combinations List */}
-            <ScrollView style={styles.combinationsContainer}>
-                {combinations.map((combo, index) => (
-                    <CombinationRow
-                        key={index}
-                        number={combo}
-                        index={index}
-                    />
-                ))}
-            </ScrollView>
+                {/* Combinations List */}
+                <ScrollView style={styles.combinationsContainer}>
+                    {combinations.map((combo, index) => (
+                        <CombinationRow
+                            key={index}
+                            number={combo}
+                            index={index}
+                        />
+                    ))}
+                </ScrollView>
 
-            {/* Bottom Bar */}
-            <View style={styles.bottomBar}>
-                <View style={styles.totalContainer}>
-                    <Text style={styles.totalAmount}>Rs : ₹ {totalAmount}</Text>
-                    <Text style={styles.totalLabel}>Total Amount</Text>
+                {/* Bottom Bar */}
+                <View style={styles.bottomBar}>
+                    <View style={styles.totalContainer}>
+                        <Text style={styles.totalAmount}>Rs : ₹ {totalAmount}</Text>
+                        <Text style={styles.totalLabel}>Total Amount</Text>
+                    </View>
+                    <TouchableOpacity
+                        style={styles.placeBetButton}
+                        onPress={() => handlePlaceBet()}
+                    >
+                        <Text style={styles.buttonText}>PLACE BET</Text>
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity
-                    style={styles.placeBetButton}
-                    onPress={() => handlePlaceBet()}
-                >
-                    <Text style={styles.buttonText}>PLACE BET</Text>
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
+            </SafeAreaView>
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000',
+        // backgroundColor: '#000',
     },
     inputContainer: {
         flexDirection: 'row',

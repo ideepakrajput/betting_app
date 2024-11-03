@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ImageBackground } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import { updateUpiDetails } from '../services/endPoints.js'; // Assuming this endpoint exists
 import CustomAlert from '../components/CustomAlert.js';
@@ -74,52 +74,62 @@ const UpiDetailsUpdateScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Update UPI Details</Text>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                <Text style={styles.title}>Update UPI Details</Text>
 
-            <TextInput
-                label="UPI Name"
-                value={upiName}
-                textColor='#fff'
-                onChangeText={setUpiName}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {/* Show validation message for UPI Name */}
-            {upiNameError ? <Text style={styles.errorText}>{upiNameError}</Text> : null}
-
-            <TextInput
-                label="UPI ID"
-                value={upiId}
-                textColor='#fff'
-                onChangeText={setUpiId}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {/* Show validation message for UPI ID */}
-            {upiIdError ? <Text style={styles.errorText}>{upiIdError}</Text> : null}
-
-            <Button
-                mode="contained"
-                onPress={handleUpdateUpiDetails}
-                style={styles.button}
-                labelStyle={styles.buttonText}
-                disabled={loading} // Disable button while loading
-            >
-                {loading ? 'Updating...' : 'Update UPI Details'}
-            </Button>
-
-            {/* Show custom alert */}
-            {alertVisible && (
-                <CustomAlert
-                    type={alertType}
-                    message={alertMessage}
-                    onClose={() => setAlertVisible(false)}
+                <TextInput
+                    label="UPI Name"
+                    value={upiName}
+                    textColor='#fff'
+                    onChangeText={setUpiName}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
                 />
-            )}
-        </View>
+                {/* Show validation message for UPI Name */}
+                {upiNameError ? <Text style={styles.errorText}>{upiNameError}</Text> : null}
+
+                <TextInput
+                    label="UPI ID"
+                    value={upiId}
+                    textColor='#fff'
+                    onChangeText={setUpiId}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                />
+                {/* Show validation message for UPI ID */}
+                {upiIdError ? <Text style={styles.errorText}>{upiIdError}</Text> : null}
+
+                <Button
+                    mode="contained"
+                    onPress={handleUpdateUpiDetails}
+                    style={styles.button}
+                    labelStyle={styles.buttonText}
+                    disabled={loading} // Disable button while loading
+                >
+                    {loading ? 'Updating...' : 'Update UPI Details'}
+                </Button>
+
+                {/* Show custom alert */}
+                {alertVisible && (
+                    <CustomAlert
+                        type={alertType}
+                        message={alertMessage}
+                        onClose={() => setAlertVisible(false)}
+                    />
+                )}
+            </View>
+        </ImageBackground>
     );
 };
 
@@ -127,7 +137,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#000000',
+        // backgroundColor: '#000000',
     },
     title: {
         fontSize: 24,

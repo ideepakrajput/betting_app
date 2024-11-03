@@ -47,7 +47,15 @@ const ForgotPasswordScreen = () => {
     };
 
     const renderStep1 = () => (
-        <>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
             <Text style={styles.title}>Forgot Password</Text>
             <Text style={styles.subtitle}>Enter your phone number to receive a verification code</Text>
             <TextInput
@@ -68,7 +76,7 @@ const ForgotPasswordScreen = () => {
             >
                 Send Verification Code
             </Button>
-        </>
+        </ImageBackground>
     );
 
     const renderStep2 = () => (

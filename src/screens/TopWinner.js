@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, ImageBackground } from 'react-native';
 import { Text, Card, Avatar } from 'react-native-paper';
 
 const users = [
@@ -13,29 +13,39 @@ const users = [
 
 const TopWinner = () => {
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Top Winners</Text>
-            <ScrollView>
-                {users.map((user) => (
-                    <Card key={user.id} style={styles.card}>
-                        <View style={styles.row}>
-                            <Avatar.Icon size={50} icon={user.icon} color={user.color} style={styles.icon} />
-                            <View style={styles.info}>
-                                <Text style={styles.name}>{user.name}</Text>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                <Text style={styles.title}>Top Winners</Text>
+                <ScrollView>
+                    {users.map((user) => (
+                        <Card key={user.id} style={styles.card}>
+                            <View style={styles.row}>
+                                <Avatar.Icon size={50} icon={user.icon} color={user.color} style={styles.icon} />
+                                <View style={styles.info}>
+                                    <Text style={styles.name}>{user.name}</Text>
+                                </View>
+                                <Text style={styles.amount}>{user.amount}</Text>
                             </View>
-                            <Text style={styles.amount}>{user.amount}</Text>
-                        </View>
-                    </Card>
-                ))}
-            </ScrollView>
-        </View>
+                        </Card>
+                    ))}
+                </ScrollView>
+            </View>
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000000',
+        // backgroundColor: '#000000',
         padding: 10,
 
     },

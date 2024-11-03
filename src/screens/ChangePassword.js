@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ImageBackground } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import { changePassword } from '../services/endPoints.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -67,75 +67,85 @@ const ChangePasswordScreen = () => {
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.title}>Change Password</Text>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <ScrollView style={styles.container}>
+                <Text style={styles.title}>Change Password</Text>
 
-            <TextInput
-                label="Current Password"
-                value={currentPassword}
-                textColor='#fff'
-                onChangeText={(text) => {
-                    setCurrentPassword(text);
-                    setCurrentPasswordError(''); // Reset error when user starts typing
-                }}
-                secureTextEntry={!showCurrentPassword}
-                right={<TextInput.Icon icon="eye" onPress={() => setShowCurrentPassword(!showCurrentPassword)} />}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {currentPasswordError ? <Text style={styles.errorText}>{currentPasswordError}</Text> : null}
-
-            <TextInput
-                label="New Password"
-                value={newPassword}
-                textColor='#fff'
-                onChangeText={(text) => {
-                    setNewPassword(text);
-                    setNewPasswordError(''); // Reset error when user starts typing
-                }}
-                secureTextEntry={!showNewPassword}
-                right={<TextInput.Icon icon="eye" onPress={() => setShowNewPassword(!showNewPassword)} />}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {newPasswordError ? <Text style={styles.errorText}>{newPasswordError}</Text> : null}
-
-            <TextInput
-                label="Confirm New Password"
-                value={confirmNewPassword}
-                textColor='#fff'
-                onChangeText={(text) => {
-                    setConfirmNewPassword(text);
-                    setConfirmNewPasswordError(''); // Reset error when user starts typing
-                }}
-                secureTextEntry={!showConfirmNewPassword}
-                right={<TextInput.Icon icon="eye" onPress={() => setShowConfirmNewPassword(!showConfirmNewPassword)} />}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {confirmNewPasswordError ? <Text style={styles.errorText}>{confirmNewPasswordError}</Text> : null}
-
-            <Button
-                mode="contained"
-                onPress={handleChangePassword}
-                style={styles.button}
-                labelStyle={styles.buttonText}
-            >
-                Change Password
-            </Button>
-
-            {/* Show custom alert */}
-            {alertVisible && (
-                <CustomAlert
-                    type={alertType}
-                    message={alertMessage}
-                    onClose={() => setAlertVisible(false)}
+                <TextInput
+                    label="Current Password"
+                    value={currentPassword}
+                    textColor='#fff'
+                    onChangeText={(text) => {
+                        setCurrentPassword(text);
+                        setCurrentPasswordError(''); // Reset error when user starts typing
+                    }}
+                    secureTextEntry={!showCurrentPassword}
+                    right={<TextInput.Icon icon="eye" onPress={() => setShowCurrentPassword(!showCurrentPassword)} />}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
                 />
-            )}
-        </ScrollView>
+                {currentPasswordError ? <Text style={styles.errorText}>{currentPasswordError}</Text> : null}
+
+                <TextInput
+                    label="New Password"
+                    value={newPassword}
+                    textColor='#fff'
+                    onChangeText={(text) => {
+                        setNewPassword(text);
+                        setNewPasswordError(''); // Reset error when user starts typing
+                    }}
+                    secureTextEntry={!showNewPassword}
+                    right={<TextInput.Icon icon="eye" onPress={() => setShowNewPassword(!showNewPassword)} />}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                />
+                {newPasswordError ? <Text style={styles.errorText}>{newPasswordError}</Text> : null}
+
+                <TextInput
+                    label="Confirm New Password"
+                    value={confirmNewPassword}
+                    textColor='#fff'
+                    onChangeText={(text) => {
+                        setConfirmNewPassword(text);
+                        setConfirmNewPasswordError(''); // Reset error when user starts typing
+                    }}
+                    secureTextEntry={!showConfirmNewPassword}
+                    right={<TextInput.Icon icon="eye" onPress={() => setShowConfirmNewPassword(!showConfirmNewPassword)} />}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                />
+                {confirmNewPasswordError ? <Text style={styles.errorText}>{confirmNewPasswordError}</Text> : null}
+
+                <Button
+                    mode="contained"
+                    onPress={handleChangePassword}
+                    style={styles.button}
+                    labelStyle={styles.buttonText}
+                >
+                    Change Password
+                </Button>
+
+                {/* Show custom alert */}
+                {alertVisible && (
+                    <CustomAlert
+                        type={alertType}
+                        message={alertMessage}
+                        onClose={() => setAlertVisible(false)}
+                    />
+                )}
+            </ScrollView>
+        </ImageBackground>
     );
 };
 
@@ -144,7 +154,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
 
-        backgroundColor: '#000000',
+        // backgroundColor: '#000000',
     },
     title: {
         fontSize: 24,

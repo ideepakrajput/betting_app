@@ -48,7 +48,7 @@ const CustomHeader = ({ navigation }) => {
                 <AntIcon name="menu-fold" size={24} color="#FFD700" />
             </TouchableOpacity>
             <Image
-                source={require('../assets/logo1.jpeg')}
+                source={require('../assets/logo-bg-remove.png')}
                 style={styles.logo}
             />
             <TouchableOpacity onPress={() => navigation.navigate('WalletDetails')}>
@@ -186,20 +186,20 @@ const DrawerContent = (props) => {
         Clipboard.setString(user?.user?.ref_id);
     };
     const shareContent = `India ka No.1 Trusted App!
-                            🕹   SK Bazaar App  🕹
+                            🕹   Shiva Gold  🕹
 
                             100% Withdrawal Guaranteed,
                             Personally Tested, 100% Secure 🔐
 
                             गली, देसावर, फरीदाबाद, इंडिया बाजार,
                             दुबई बाजार और बहुत सारी गेम!
-                            SK Bazaar App पर खेलें
+                            Shiva Gold पर खेलें
                             और 100% विड्रॉल गारंटीड पाएं
 
                             Use My referral code: ${user?.user?.ref_id} 
 
                             Download Now 👇🏻
-                            https://play.google.com/store/apps/details?id=io.skbazaar.app`;
+                            Link to the App`;
 
     const shareWithSheet = async () => {
         try {
@@ -236,7 +236,7 @@ const DrawerContent = (props) => {
             <View style={[styles.drawerHeader, { backgroundColor: "#101010" }]}>
                 <View>
                     <Image
-                        source={require('../assets/logo1.jpeg')}
+                        source={require('../assets/logo-bg-remove.png')}
                         style={[styles.logo, {
                             width: 100,
                             height: 100,

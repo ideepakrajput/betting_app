@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Dimensions } from 'react-native'
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Dimensions, ImageBackground } from 'react-native'
 import React, { useState, useEffect, useCallback } from 'react'
 import { getBetHistory } from '../services/endPoints'
 import { useFocusEffect } from '@react-navigation/native'
@@ -57,27 +57,37 @@ const BetHistory = () => {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerText}>Bet History</Text>
-                <Text style={styles.totalAmount}>Total Amount: ₹{totalBidAmount}</Text>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>Bet History</Text>
+                    <Text style={styles.totalAmount}>Total Amount: ₹{totalBidAmount}</Text>
+                </View>
+                <FlatList
+                    data={betHistory}
+                    renderItem={renderBetItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    contentContainerStyle={styles.listContainer}
+                    numColumns={2}
+                    columnWrapperStyle={styles.row}
+                />
             </View>
-            <FlatList
-                data={betHistory}
-                renderItem={renderBetItem}
-                keyExtractor={(item, index) => index.toString()}
-                contentContainerStyle={styles.listContainer}
-                numColumns={2}
-                columnWrapperStyle={styles.row}
-            />
-        </View>
+        </ImageBackground>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#121212'
+        // backgroundColor: '#121212'
     },
     centered: {
         flex: 1,

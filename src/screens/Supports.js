@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, ScrollView, Linking } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ScrollView, Linking, ImageBackground } from 'react-native';
 import { Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -28,54 +28,64 @@ const SupportScreen = () => {
         Linking.openURL(phoneUrl).catch(err => console.error('Error opening phone:', err));
     };
     return (
-        <View style={styles.container}>
-            <ScrollView>
-                <View style={styles.header}>
-                    <Text style={styles.title}>Support in Messengers</Text>
-                </View>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                <ScrollView>
+                    <View style={styles.header}>
+                        <Text style={styles.title}>Support in Messengers</Text>
+                    </View>
 
-                <View style={styles.supportContainer}>
-                    {/* WhatsApp Support */}
-                    <TouchableOpacity style={styles.supportButton} onPress={openWhatsApp}>
-                        <Icon name="whatsapp" size={30} color="#25D366" />
-                        <Text style={styles.supportText}>{WHATSAPP}</Text>
-                        <Icon name="hand-pointing-left" size={30} color="#FFD700" />
-                    </TouchableOpacity>
+                    <View style={styles.supportContainer}>
+                        {/* WhatsApp Support */}
+                        <TouchableOpacity style={styles.supportButton} onPress={openWhatsApp}>
+                            <Icon name="whatsapp" size={30} color="#25D366" />
+                            <Text style={styles.supportText}>{WHATSAPP}</Text>
+                            <Icon name="hand-pointing-left" size={30} color="#FFD700" />
+                        </TouchableOpacity>
 
-                    {/* Telegram Support */}
-                    <TouchableOpacity style={styles.supportButton} onPress={openTelegram}>
-                        <FontAwesome name="telegram" size={30} color="#0088cc" />
-                        <Text style={styles.supportText}>Telegram</Text>
-                        <Icon name="hand-pointing-left" size={30} color="#FFD700" />
-                    </TouchableOpacity>
+                        {/* Telegram Support */}
+                        <TouchableOpacity style={styles.supportButton} onPress={openTelegram}>
+                            <FontAwesome name="telegram" size={30} color="#0088cc" />
+                            <Text style={styles.supportText}>Telegram</Text>
+                            <Icon name="hand-pointing-left" size={30} color="#FFD700" />
+                        </TouchableOpacity>
 
-                    {/* Call Support */}
-                    <TouchableOpacity style={styles.supportButton} onPress={openPhone}>
-                        <Icon name="phone" size={30} color="#32CD32" />
-                        <Text style={styles.supportText}>{PHONE}</Text>
-                        <Icon name="hand-pointing-left" size={30} color="#FFD700" />
-                    </TouchableOpacity>
-                </View>
+                        {/* Call Support */}
+                        <TouchableOpacity style={styles.supportButton} onPress={openPhone}>
+                            <Icon name="phone" size={30} color="#32CD32" />
+                            <Text style={styles.supportText}>{PHONE}</Text>
+                            <Icon name="hand-pointing-left" size={30} color="#FFD700" />
+                        </TouchableOpacity>
+                    </View>
 
-                {/* YouTube Video */}
-                <View>
-                    <YoutubePlayer
-                        ref={playerRef}
-                        height={300}
-                        play={true}
-                        videoId={YOUTUBE}
-                        onChangeState={onStateChange}
-                    />
-                </View>
-            </ScrollView>
-        </View>
+                    {/* YouTube Video */}
+                    <View>
+                        <YoutubePlayer
+                            ref={playerRef}
+                            height={300}
+                            play={true}
+                            videoId={YOUTUBE}
+                            onChangeState={onStateChange}
+                        />
+                    </View>
+                </ScrollView>
+            </View>
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000000', // Dark background
+        // backgroundColor: '#000000', // Dark background
         padding: 20,
     },
     header: {

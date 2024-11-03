@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ImageBackground } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import { updateBankDetails } from '../services/endPoints.js'; // Assuming this endpoint exists
 import CustomAlert from '../components/CustomAlert.js';
@@ -89,72 +89,82 @@ const BankDetailsUpdateScreen = () => {
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.title}>Update Bank Details</Text>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <ScrollView style={styles.container}>
+                <Text style={styles.title}>Update Bank Details</Text>
 
-            <TextInput
-                label="Beneficiary Name"
-                value={beneficiaryName}
-                textColor='#fff'
-                onChangeText={setBeneficiaryName}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {errors.beneficiaryName ? <Text style={styles.errorText}>{errors.beneficiaryName}</Text> : null}
-
-            <TextInput
-                label="Bank Name"
-                value={bankName}
-                textColor='#fff'
-                onChangeText={setBankName}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {errors.bankName ? <Text style={styles.errorText}>{errors.bankName}</Text> : null}
-
-            <TextInput
-                label="Account Number"
-                value={accountNumber}
-                textColor='#fff'
-                onChangeText={setAccountNumber}
-                style={styles.input}
-                keyboardType="numeric"
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {errors.accountNumber ? <Text style={styles.errorText}>{errors.accountNumber}</Text> : null}
-
-            <TextInput
-                label="IFSC Code"
-                value={ifscCode}
-                textColor='#fff'
-                onChangeText={setIfscCode}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {errors.ifscCode ? <Text style={styles.errorText}>{errors.ifscCode}</Text> : null}
-
-            <Button
-                mode="contained"
-                onPress={handleUpdateBankDetails}
-                style={styles.button}
-                labelStyle={styles.buttonText}
-            >
-                Update Bank Details
-            </Button>
-
-            {/* Show custom alert */}
-            {alertVisible && (
-                <CustomAlert
-                    type={alertType}
-                    message={alertMessage}
-                    onClose={() => setAlertVisible(false)}
+                <TextInput
+                    label="Beneficiary Name"
+                    value={beneficiaryName}
+                    textColor='#fff'
+                    onChangeText={setBeneficiaryName}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
                 />
-            )}
-        </ScrollView>
+                {errors.beneficiaryName ? <Text style={styles.errorText}>{errors.beneficiaryName}</Text> : null}
+
+                <TextInput
+                    label="Bank Name"
+                    value={bankName}
+                    textColor='#fff'
+                    onChangeText={setBankName}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                />
+                {errors.bankName ? <Text style={styles.errorText}>{errors.bankName}</Text> : null}
+
+                <TextInput
+                    label="Account Number"
+                    value={accountNumber}
+                    textColor='#fff'
+                    onChangeText={setAccountNumber}
+                    style={styles.input}
+                    keyboardType="numeric"
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                />
+                {errors.accountNumber ? <Text style={styles.errorText}>{errors.accountNumber}</Text> : null}
+
+                <TextInput
+                    label="IFSC Code"
+                    value={ifscCode}
+                    textColor='#fff'
+                    onChangeText={setIfscCode}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                />
+                {errors.ifscCode ? <Text style={styles.errorText}>{errors.ifscCode}</Text> : null}
+
+                <Button
+                    mode="contained"
+                    onPress={handleUpdateBankDetails}
+                    style={styles.button}
+                    labelStyle={styles.buttonText}
+                >
+                    Update Bank Details
+                </Button>
+
+                {/* Show custom alert */}
+                {alertVisible && (
+                    <CustomAlert
+                        type={alertType}
+                        message={alertMessage}
+                        onClose={() => setAlertVisible(false)}
+                    />
+                )}
+            </ScrollView>
+        </ImageBackground>
     );
 };
 
@@ -162,7 +172,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#000000',
+        // backgroundColor: '#000000',
     },
     title: {
         fontSize: 24,

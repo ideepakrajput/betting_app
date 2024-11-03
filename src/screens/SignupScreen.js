@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ImageBackground } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import SocialLinks from '../components/ContactDetails';
 import { register } from '../services/endPoints.js';
@@ -80,105 +80,115 @@ const SignupScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Create an account</Text>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                <Text style={styles.title}>Create an account</Text>
 
-            <TextInput
-                label="Name"
-                textColor='#fff'
-                value={name}
-                onChangeText={setName}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {/* Show validation message for Name */}
-            {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
-
-            <TextInput
-                label="Phone Number"
-                textColor='#fff'
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                style={styles.input}
-                keyboardType="phone-pad"
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {/* Show validation message for Phone Number */}
-            {phoneNumberError ? <Text style={styles.errorText}>{phoneNumberError}</Text> : null}
-
-            <TextInput
-                label="Password"
-                textColor='#fff'
-                value={password}
-                onChangeText={(text) => {
-                    setPassword(text);
-                    setPasswordError(''); // Reset error when user starts typing
-                }}
-                secureTextEntry={!showPassword}
-                right={<TextInput.Icon icon="eye" onPress={() => setShowPassword(!showPassword)} />}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-            {/* Show validation message for Password */}
-            {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-
-            <TextInput
-                label="Confirm Password"
-                textColor='#fff'
-                value={confirmPassword}
-                onChangeText={(text) => {
-                    setConfirmPassword(text);
-                    setPasswordError(''); // Reset error when user starts typing
-                }}
-                secureTextEntry={!showConfirmPassword}
-                right={<TextInput.Icon icon="eye" onPress={() => setShowConfirmPassword(!showConfirmPassword)} />}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-
-            <TextInput
-                label="Referral Code (Optional)"
-                textColor='#fff'
-                value={referralCode}
-                onChangeText={setReferralCode}
-                style={styles.input}
-                mode="outlined"
-                theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
-            />
-
-            <Button
-                mode="contained"
-                onPress={handleSignup}
-                style={styles.button}
-                labelStyle={styles.buttonText}
-            >
-                Sign Up
-            </Button>
-
-            <Button
-                mode="text"
-                onPress={() => { navigation.navigate('Login'); }}
-                style={styles.signInButton}
-                labelStyle={styles.signInButtonText}
-            >
-                Already have an account? Sign In
-            </Button>
-
-            <SocialLinks />
-
-            {/* Show custom alert */}
-            {alertVisible && (
-                <CustomAlert
-                    type={alertType}
-                    message={alertMessage}
-                    onClose={() => setAlertVisible(false)}
+                <TextInput
+                    label="Name"
+                    textColor='#fff'
+                    value={name}
+                    onChangeText={setName}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
                 />
-            )}
-        </View>
+                {/* Show validation message for Name */}
+                {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
+
+                <TextInput
+                    label="Phone Number"
+                    textColor='#fff'
+                    value={phoneNumber}
+                    onChangeText={setPhoneNumber}
+                    style={styles.input}
+                    keyboardType="phone-pad"
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                />
+                {/* Show validation message for Phone Number */}
+                {phoneNumberError ? <Text style={styles.errorText}>{phoneNumberError}</Text> : null}
+
+                <TextInput
+                    label="Password"
+                    textColor='#fff'
+                    value={password}
+                    onChangeText={(text) => {
+                        setPassword(text);
+                        setPasswordError(''); // Reset error when user starts typing
+                    }}
+                    secureTextEntry={!showPassword}
+                    right={<TextInput.Icon icon="eye" onPress={() => setShowPassword(!showPassword)} />}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                />
+                {/* Show validation message for Password */}
+                {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+
+                <TextInput
+                    label="Confirm Password"
+                    textColor='#fff'
+                    value={confirmPassword}
+                    onChangeText={(text) => {
+                        setConfirmPassword(text);
+                        setPasswordError(''); // Reset error when user starts typing
+                    }}
+                    secureTextEntry={!showConfirmPassword}
+                    right={<TextInput.Icon icon="eye" onPress={() => setShowConfirmPassword(!showConfirmPassword)} />}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                />
+
+                <TextInput
+                    label="Referral Code (Optional)"
+                    textColor='#fff'
+                    value={referralCode}
+                    onChangeText={setReferralCode}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                />
+
+                <Button
+                    mode="contained"
+                    onPress={handleSignup}
+                    style={styles.button}
+                    labelStyle={styles.buttonText}
+                >
+                    Sign Up
+                </Button>
+
+                <Button
+                    mode="text"
+                    onPress={() => { navigation.navigate('Login'); }}
+                    style={styles.signInButton}
+                    labelStyle={styles.signInButtonText}
+                >
+                    Already have an account? Sign In
+                </Button>
+
+                <SocialLinks />
+
+                {/* Show custom alert */}
+                {alertVisible && (
+                    <CustomAlert
+                        type={alertType}
+                        message={alertMessage}
+                        onClose={() => setAlertVisible(false)}
+                    />
+                )}
+            </View>
+        </ImageBackground>
     );
 };
 
@@ -187,7 +197,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         paddingTop: 50,
-        backgroundColor: '#000000',
+        // backgroundColor: '#000000',
     },
     title: {
         fontSize: 24,

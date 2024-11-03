@@ -1,6 +1,6 @@
 import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ImageBackground } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import SocialLinks from '../components/ContactDetails';
 import { checkUserWithPhone, login } from '../services/endPoints';
@@ -133,74 +133,84 @@ const LoginScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Welcome Back</Text>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                <Text style={styles.title}>Welcome Back</Text>
 
-            {step === 1 ? (
-                <View>
+                {step === 1 ? (
+                    <View>
+                        <TextInput
+                            label="Phone Number"
+                            value={phoneNumber}
+                            textColor='#fff'
+                            onChangeText={setPhoneNumber}
+                            style={styles.input}
+                            keyboardType="phone-pad"
+                            mode="outlined"
+                            theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }} // Black text on white background
+                        />
+                    </View>
+                ) : (
                     <TextInput
-                        label="Phone Number"
-                        value={phoneNumber}
+                        label="Password"
+                        value={password}
                         textColor='#fff'
-                        onChangeText={setPhoneNumber}
+                        onChangeText={setPassword}
+                        secureTextEntry={!showPassword}
+                        right={<TextInput.Icon icon="eye" onPress={() => setShowPassword(!showPassword)} />}
                         style={styles.input}
-                        keyboardType="phone-pad"
                         mode="outlined"
                         theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }} // Black text on white background
                     />
-                </View>
-            ) : (
-                <TextInput
-                    label="Password"
-                    value={password}
-                    textColor='#fff'
-                    onChangeText={setPassword}
-                    secureTextEntry={!showPassword}
-                    right={<TextInput.Icon icon="eye" onPress={() => setShowPassword(!showPassword)} />}
-                    style={styles.input}
-                    mode="outlined"
-                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }} // Black text on white background
-                />
-            )}
+                )}
 
-            <Button
-                mode="contained"
-                onPress={handleContinue}
-                style={styles.button}
-                labelStyle={styles.buttonText}
-            >
-                {step === 1 ? 'Continue' : 'Sign In'}
-            </Button>
+                <Button
+                    mode="contained"
+                    onPress={handleContinue}
+                    style={styles.button}
+                    labelStyle={styles.buttonText}
+                >
+                    {step === 1 ? 'Continue' : 'Sign In'}
+                </Button>
 
-            <Button
-                mode="text"
-                onPress={() => { navigation.navigate("Signup") }}
-                style={styles.signUpButton}
-                labelStyle={styles.signUpButtonText}
-            >
-                Don't have an account? Sign Up
-            </Button>
+                <Button
+                    mode="text"
+                    onPress={() => { navigation.navigate("Signup") }}
+                    style={styles.signUpButton}
+                    labelStyle={styles.signUpButtonText}
+                >
+                    Don't have an account? Sign Up
+                </Button>
 
-            <Button
-                mode="text"
-                onPress={() => { navigation.navigate("ForgotPassword") }}
-                style={styles.forgotPasswordButton}
-                labelStyle={styles.forgotPasswordButtonText}
-            >
-                Forgot password?
-            </Button>
+                <Button
+                    mode="text"
+                    onPress={() => { navigation.navigate("ForgotPassword") }}
+                    style={styles.forgotPasswordButton}
+                    labelStyle={styles.forgotPasswordButtonText}
+                >
+                    Forgot password?
+                </Button>
 
-            <SocialLinks />
+                <SocialLinks />
 
-            {/* Custom Alert */}
-            {alertVisible && (
-                <CustomAlert
-                    type={alertType}
-                    message={alertMessage}
-                    onClose={() => setAlertVisible(false)}
-                />
-            )}
-        </View>
+                {/* Custom Alert */}
+                {alertVisible && (
+                    <CustomAlert
+                        type={alertType}
+                        message={alertMessage}
+                        onClose={() => setAlertVisible(false)}
+                    />
+                )}
+            </View>
+        </ImageBackground>
     );
 };
 
@@ -209,7 +219,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         paddingTop: 50,
-        backgroundColor: '#000000', // Black background
+        // backgroundColor: '#000000',
     },
     title: {
         fontSize: 24,

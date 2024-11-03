@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
 import { Button, Text } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-import { StyleSheet, View } from 'react-native';
+import { ImageBackground, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -93,110 +93,120 @@ const HomeScreen = () => {
 
     return (
         <View style={styles.container}>
-            {/* Top Header Section */}
-            <View style={styles.header}>
-                <View>
-                    <Text style={styles.headerText}>{user?.user?.name || "Test User"}</Text>
-                    <Text style={styles.balance}>₹ {user?.user?.wallet_balance || 0}</Text>
+            <ImageBackground
+                source={require('../assets/bg.jpg')}
+                style={{
+                    flex: 1,
+                    width: '100%',
+                    height: '100%'
+                }}
+                resizeMode="cover"
+            >
+                {/* Top Header Section */}
+                <View style={styles.header}>
+                    <View>
+                        <Text style={styles.headerText}>{user?.user?.name || "Test User"}</Text>
+                        <Text style={styles.balance}>₹ {user?.user?.wallet_balance || 0}</Text>
+                    </View>
+                    <View>
+                        <Button
+                            mode="contained"
+                            style={styles.addButton}
+                            icon={() => <Icon name="wallet-plus" size={20} color="#fff" />}
+                            onPress={() => { navigation.navigate('Transactions', { activeTab: 'addMoney' }) }}
+                        >
+                            Add Money
+                        </Button>
+                    </View>
                 </View>
-                <View>
+
+                <View style={styles.content}>
                     <Button
                         mode="contained"
-                        style={styles.addButton}
-                        icon={() => <Icon name="wallet-plus" size={20} color="#fff" />}
-                        onPress={() => { navigation.navigate('Transactions', { activeTab: 'addMoney' }) }}
+                        // style={styles.addButton}
+                        labelStyle={styles.buttonLabel}
+                        icon={() => <Icon name="trophy" size={20} color="#fff" />}
+                        onPress={() => { navigation.navigate('TopWinner') }}
                     >
-                        Add Money
+                        Top Winners
+                    </Button>
+                    <Button
+                        mode="contained"
+                        // style={styles.addButton}
+                        labelStyle={styles.buttonLabel}
+                        icon={() => <MaterialIcons name="support-agent" size={20} color="#fff" />}
+                        onPress={() => { navigation.navigate('Support') }}
+                    >
+                        Help
+                    </Button>
+                    <Button
+                        mode="contained"
+                        // style={styles.addButton}
+                        labelStyle={styles.buttonLabel}
+                        icon={() => <Icon name="cash-minus" size={20} color="#fff" />}
+                        onPress={() => { navigation.navigate('WalletDetails') }}
+                    >
+                        Withdraw
                     </Button>
                 </View>
-            </View>
+                <ScrollView style={styles.scrollView}>
+                    {/* Live Results Section */}
+                    <Text style={styles.categoryHeader}>Live Results</Text>
+                    {/* {liveResults.map((game) => ( */}
+                    <View key={liveResults[0]?._id} style={styles.gameCard}>
+                        <Text style={styles.gameName}>{liveResults[0]?.name}</Text>
+                        <Text style={styles.gameResult}>{liveResults[0]?.result || 77}</Text>
+                    </View>
+                    {/* ))} */}
 
-            <View style={styles.content}>
-                <Button
-                    mode="contained"
-                    // style={styles.addButton}
-                    labelStyle={styles.buttonLabel}
-                    icon={() => <Icon name="trophy" size={20} color="#fff" />}
-                    onPress={() => { navigation.navigate('TopWinner') }}
-                >
-                    Top Winners
-                </Button>
-                <Button
-                    mode="contained"
-                    // style={styles.addButton}
-                    labelStyle={styles.buttonLabel}
-                    icon={() => <MaterialIcons name="support-agent" size={20} color="#fff" />}
-                    onPress={() => { navigation.navigate('Support') }}
-                >
-                    Help
-                </Button>
-                <Button
-                    mode="contained"
-                    // style={styles.addButton}
-                    labelStyle={styles.buttonLabel}
-                    icon={() => <Icon name="cash-minus" size={20} color="#fff" />}
-                    onPress={() => { navigation.navigate('WalletDetails') }}
-                >
-                    Withdraw
-                </Button>
-            </View>
-            <ScrollView style={styles.scrollView}>
-                {/* Live Results Section */}
-                <Text style={styles.categoryHeader}>Live Results</Text>
-                {/* {liveResults.map((game) => ( */}
-                <View key={liveResults[0]?._id} style={styles.gameCard}>
-                    <Text style={styles.gameName}>{liveResults[0]?.name}</Text>
-                    <Text style={styles.gameResult}>{liveResults[0]?.result || 77}</Text>
-                </View>
-                {/* ))} */}
+                    {/* Live Games Section */}
+                    <Text style={styles.categoryHeader}>Live Games</Text>
+                    {liveGames.map((game) => (
+                        <View key={game._id} style={styles.gameCard}>
+                            <View>
+                                <Text style={styles.gameName}>{game.name}</Text>
+                                <Text style={styles.timeInfo}>
+                                    Open: {(game.open_time)} |
+                                    Close: {(game.close_time)} |
+                                    Result: {(game.result_time)}
+                                </Text>
+                            </View>
+                            <View>
+                                <Button
+                                    mode="contained"
+                                    textColor='black'
+                                    style={styles.playButton}
+                                    onPress={() => navigation.navigate("GamePlay", { name: game.name, game_id: game._id })}
+                                >
+                                    Play
+                                </Button>
+                            </View>
+                        </View>
+                    ))}
 
-                {/* Live Games Section */}
-                <Text style={styles.categoryHeader}>Live Games</Text>
-                {liveGames.map((game) => (
-                    <View key={game._id} style={styles.gameCard}>
-                        <View>
+                    {/* Upcoming Games Section */}
+                    <Text style={styles.categoryHeader}>Upcoming Games</Text>
+                    {upcomingGames.map((game) => (
+                        <View key={game._id} style={[styles.gameCard, {}]}>
+                            <View>
+                                <Text style={styles.gameName}>{game.name}</Text>
+                                <Text style={styles.timeInfo}>Open Time : {game.open_time}</Text>
+                                <Text style={styles.timeInfo}>Close Time : {game.close_time}</Text>
+                                <Text style={styles.timeInfo}>Result Time : {game.result_time}</Text>
+                            </View>
+                        </View>
+                    ))}
+
+                    {/* Last Results Section */}
+                    <Text style={styles.categoryHeader}>Previous Results</Text>
+                    {lastResults.map((game) => (
+                        <View key={game._id} style={styles.gameCard}>
                             <Text style={styles.gameName}>{game.name}</Text>
-                            <Text style={styles.timeInfo}>
-                                Open: {(game.open_time)} |
-                                Close: {(game.close_time)} |
-                                Result: {(game.result_time)}
-                            </Text>
+                            <Text style={styles.gameResult}>{game.result || 77}</Text>
                         </View>
-                        <View>
-                            <Button
-                                mode="contained"
-                                textColor='black'
-                                style={styles.playButton}
-                                onPress={() => navigation.navigate("GamePlay", { name: game.name, game_id: game._id })}
-                            >
-                                Play
-                            </Button>
-                        </View>
-                    </View>
-                ))}
-
-                {/* Upcoming Games Section */}
-                <Text style={styles.categoryHeader}>Upcoming Games</Text>
-                {upcomingGames.map((game) => (
-                    <View key={game._id} style={[styles.gameCard, {}]}>
-                        <View>
-                            <Text style={styles.gameName}>{game.name}</Text>
-                            <Text style={styles.timeInfo}>Open Time : {game.open_time}</Text>
-                            <Text style={styles.timeInfo}>Close Time : {game.close_time}</Text>
-                            <Text style={styles.timeInfo}>Result Time : {game.result_time}</Text>
-                        </View>
-                    </View>
-                ))}
-
-                {/* Last Results Section */}
-                <Text style={styles.categoryHeader}>Previous Results</Text>
-                {lastResults.map((game) => (
-                    <View key={game._id} style={styles.gameCard}>
-                        <Text style={styles.gameName}>{game.name}</Text>
-                        <Text style={styles.gameResult}>{game.result || 77}</Text>
-                    </View>
-                ))}
-            </ScrollView>
+                    ))}
+                </ScrollView>
+            </ImageBackground>
         </View>
     );
 };

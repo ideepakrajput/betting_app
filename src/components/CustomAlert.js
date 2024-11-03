@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -7,6 +7,14 @@ const { width } = Dimensions.get('window');
 
 const CustomAlert = ({ type = 'success', message, onClose }) => {
     const isError = type === 'error';
+
+    useEffect(() => {
+        if (message) {
+            setTimeout(() => {
+                onClose();
+            }, 5000);
+        }
+    }, [message, onClose]);
 
     return (
         <View style={styles.alertWrapper}>

@@ -10,10 +10,11 @@
     "test": "jest"
   },
   "dependencies": {
+    "@notifee/react-native": "^9.1.2",
     "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-native-clipboard/clipboard": "^1.14.2",
-    "@react-native-firebase/app": "^21.0.0",
-    "@react-native-firebase/messaging": "^21.0.0",
+    "@react-native-firebase/app": "^21.3.0",
+    "@react-native-firebase/messaging": "^21.3.0",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/drawer": "^6.7.2",
     "@react-navigation/native": "^6.1.18",

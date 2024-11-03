@@ -4,38 +4,48 @@ import { Text, Card } from 'react-native-paper';
 
 const Rules = () => {
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Game and Payment Guidelines</Text>
-            <ScrollView>
-                <Card style={styles.card}>
-                    <Text style={styles.header}>SK Matka Payment Rules</Text>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                <Text style={styles.title}>Game and Payment Guidelines</Text>
+                <ScrollView>
+                    <Card style={styles.card}>
+                        <Text style={styles.header}>SK Matka Payment Rules</Text>
 
-                    <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Minimum Deposit: ₹200 (Automatic)</Text></Text>
+                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Minimum Deposit: ₹200 (Automatic)</Text></Text>
 
-                    <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Minimum Withdrawal: ₹900</Text></Text>
-                    <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Maximum Withdrawal per Day: ₹10 Lakhs</Text></Text>
-                    <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Withdrawal Timing: 10:00 AM to 04:00 PM</Text></Text>
+                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Minimum Withdrawal: ₹900</Text></Text>
+                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Maximum Withdrawal per Day: ₹10 Lakhs</Text></Text>
+                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Withdrawal Timing: 10:00 AM to 04:00 PM</Text></Text>
 
-                    <Text style={styles.noteText}>NOTE: Only winnings amount can be withdrawn.</Text>
+                        <Text style={styles.noteText}>NOTE: Only winnings amount can be withdrawn.</Text>
 
-                    <Text style={styles.header}>Game Rates</Text>
+                        <Text style={styles.header}>Game Rates</Text>
 
-                    <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Jodi Rate: ₹100 for ₹9,000</Text></Text>
-                    <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Harup Rate: ₹100 for ₹900</Text></Text>
+                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Jodi Rate: ₹100 for ₹9,000</Text></Text>
+                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Harup Rate: ₹100 for ₹900</Text></Text>
 
-                    <Text style={styles.footerText}>SK DREAM</Text>
-                    <Text style={styles.footerText}>SK MATKA</Text>
-                    <Text style={styles.footerText}>SK MATKA</Text>
-                </Card>
-            </ScrollView>
-        </View>
+                        <Text style={styles.footerText}>SK DREAM</Text>
+                        <Text style={styles.footerText}>SK MATKA</Text>
+                        <Text style={styles.footerText}>SK MATKA</Text>
+                    </Card>
+                </ScrollView>
+            </View>
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000000', // Black background
+        // backgroundColor: '#000000', // Black background
         padding: 10,
 
     },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, ScrollView, Linking, Share, Alert } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ScrollView, Linking, Share, Alert, ImageBackground } from 'react-native';
 import { Text, Button, Card } from 'react-native-paper';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useNavigation } from '@react-navigation/native';
@@ -13,20 +13,20 @@ const ReferAndEarn = () => {
         Clipboard.setString(user?.user?.ref_id);
     };
     const shareContent = `India ka No.1 Trusted App!
-                            🕹   SK Bazaar App  🕹
+                            🕹   Shiva Gold  🕹
 
                             100% Withdrawal Guaranteed,
                             Personally Tested, 100% Secure 🔐
 
                             गली, देसावर, फरीदाबाद, इंडिया बाजार,
                             दुबई बाजार और बहुत सारी गेम!
-                            SK Bazaar App पर खेलें
+                            Shiva Gold पर खेलें
                             और 100% विड्रॉल गारंटीड पाएं
 
                             Use My referral code: ${user?.user?.ref_id} 
 
                             Download Now 👇🏻
-                            https://play.google.com/store/apps/details?id=io.skbazaar.app`;
+                            Link to the App`;
 
     const shareWithSheet = async () => {
         try {
@@ -55,71 +55,81 @@ const ReferAndEarn = () => {
         Linking.openURL(whatsappUrl).catch(err => console.error('Error opening WhatsApp:', err));
     };
     return (
-        <View style={styles.container}>
-            {/* <Text style={styles.title}>Refer & Earn</Text> */}
-            <ScrollView>
-                <Card style={styles.card}>
-                    <Text style={styles.title}>Share SK BAZAAR App with Friends, Secure & Trusted</Text>
-                    <Text style={styles.subtitle}>1% Commission on Every Deposit, Forever Unlock Exclusive Rewards</Text>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                {/* <Text style={styles.title}>Refer & Earn</Text> */}
+                <ScrollView>
+                    <Card style={styles.card}>
+                        <Text style={styles.title}>Share Shiva Gold with Friends, Secure & Trusted</Text>
+                        <Text style={styles.subtitle}>1% Commission on Every Deposit, Forever Unlock Exclusive Rewards</Text>
 
-                    <Button
-                        mode="contained"
-                        color="#ff4d4d"
-                        style={styles.shareButton}
-                        onPress={shareWithSheet}
-                    >
-                        Share Now, Earn Always
-                    </Button>
-
-                    <Card style={styles.earningsCard}>
-                        <Text style={styles.totalEarned}>Total Earned</Text>
-                        <Text style={styles.earningsAmount}>₹ {user?.user?.referral_bonus}</Text>
                         <Button
-                            mode="outlined"
-                            color="#FFB600"
-                            style={styles.checkStatusButton}
-                            onPress={() => navigation.navigate('ReferralStatus')}
+                            mode="contained"
+                            color="#ff4d4d"
+                            style={styles.shareButton}
+                            onPress={shareWithSheet}
                         >
-                            Check Referral Status
+                            Share Now, Earn Always
+                        </Button>
+
+                        <Card style={styles.earningsCard}>
+                            <Text style={styles.totalEarned}>Total Earned</Text>
+                            <Text style={styles.earningsAmount}>₹ {user?.user?.referral_bonus}</Text>
+                            <Button
+                                mode="outlined"
+                                color="#FFB600"
+                                style={styles.checkStatusButton}
+                                onPress={() => navigation.navigate('ReferralStatus')}
+                            >
+                                Check Referral Status
+                            </Button>
+                        </Card>
+
+                        <View style={styles.referralCodeContainer}>
+                            <Text style={styles.referralCodeText}>{user?.user?.ref_id}</Text>
+                            <TouchableOpacity onPress={copyToClipboard} style={styles.copyButton}>
+                                <Text style={styles.copyText}>Copy</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <Text style={styles.referralNote}>
+                            ऊपर दिया गया कोड आपका रेफरल कोड है
+                        </Text>
+
+                        <Text style={styles.description}>
+                            Shiva Gold शेयर करें और 5% कमीशन पाएं
+                            अपने दोस्त के हर डिपॉजिट पर 5% commission
+                            लाइफटाइम वैलिडिटी, अनलिमिटेड बेनिफिट्स
+                            अब शेयर करें और अपने दोस्तों को Download करवाएं
+                        </Text>
+
+                        <Button
+                            mode="contained"
+                            color="#4CAF50"
+                            style={styles.inviteButton}
+                            onPress={openWhatsApp}
+                        >
+                            Invite Via Whatsapp
                         </Button>
                     </Card>
-
-                    <View style={styles.referralCodeContainer}>
-                        <Text style={styles.referralCodeText}>{user?.user?.ref_id}</Text>
-                        <TouchableOpacity onPress={copyToClipboard} style={styles.copyButton}>
-                            <Text style={styles.copyText}>Copy</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    <Text style={styles.referralNote}>
-                        ऊपर दिया गया कोड आपका रेफरल कोड है
-                    </Text>
-
-                    <Text style={styles.description}>
-                        SK Bazaar App शेयर करें और 5% कमीशन पाएं
-                        अपने दोस्त के हर डिपॉजिट पर 5% commission
-                        लाइफटाइम वैलिडिटी, अनलिमिटेड बेनिफिट्स
-                        अब शेयर करें और अपने दोस्तों को Download करवाएं
-                    </Text>
-
-                    <Button
-                        mode="contained"
-                        color="#4CAF50"
-                        style={styles.inviteButton}
-                        onPress={openWhatsApp}
-                    >
-                        Invite Via Whatsapp
-                    </Button>
-                </Card>
-            </ScrollView>
-        </View>
+                </ScrollView>
+            </View>
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000', // Black background
+        // backgroundColor: '#000', // Black background
         padding: 20,
     },
     card: {

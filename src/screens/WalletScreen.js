@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, ImageBackground } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,77 +25,86 @@ const WalletScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Wallet Statement</Text>
-            </View>
-
-            <View style={styles.buttonContainer}>
-                <Button
-                    mode="contained"
-                    style={styles.addButton}
-                    labelStyle={styles.buttonLabel}
-                    icon={() => <Icon name="wallet-plus" size={20} color="#fff" />}
-                    onPress={() => { navigation.navigate('Transactions', { activeTab: "addMoney" }) }}
-                >
-                    Add Money
-                </Button>
-                <Button
-                    mode="contained"
-                    style={styles.withdrawButton}
-                    labelStyle={styles.buttonLabel}
-                    icon={() => <Icon name="cash-minus" size={20} color="#fff" />}
-                    onPress={() => { navigation.navigate("WalletDetails") }}
-                >
-                    Withdraw Money
-                </Button>
-            </View>
-
-            <ScrollView style={styles.walletHistory}>
-                <View style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginBottom: 15
-                }}>
-                    <Text style={styles.sectionTitle}>Recent Transactions</Text>
-                    <Icon onPress={handleRefresh} name="refresh" size={25} color="#FFD700" />
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>Wallet Statement</Text>
                 </View>
 
+                <View style={styles.buttonContainer}>
+                    <Button
+                        mode="contained"
+                        style={styles.addButton}
+                        labelStyle={styles.buttonLabel}
+                        icon={() => <Icon name="wallet-plus" size={20} color="#fff" />}
+                        onPress={() => { navigation.navigate('Transactions', { activeTab: "addMoney" }) }}
+                    >
+                        Add Money
+                    </Button>
+                    <Button
+                        mode="contained"
+                        style={styles.withdrawButton}
+                        labelStyle={styles.buttonLabel}
+                        icon={() => <Icon name="cash-minus" size={20} color="#fff" />}
+                        onPress={() => { navigation.navigate("WalletDetails") }}
+                    >
+                        Withdraw Money
+                    </Button>
+                </View>
 
-                {/* Dummy data for wallet history */}
-                {transactions?.map((transaction, index) => (
-                    <View key={index} style={styles.transactionItem}>
-                        <Icon name={transaction.type === 'credit' ? 'wallet-plus' : 'cash-minus'} size={25} color="#FFD700" />
-                        <View style={styles.transactionDetails}>
-                            <Text style={styles.transactionText}>{transaction.description}</Text>
-                            <Text style={styles.transactionDate}>{new Date(transaction.createdAt).toLocaleDateString()}</Text>
-                        </View>
-                        <View style={styles.transactionDetails}>
-                            <Text style={styles.transactionAmount}>{transaction.type === 'credit' ? '+' : '-'} ₹{transaction.amount}</Text>
-                            <Text
-                                style={[
-                                    styles.transactionDate,
-                                    {
-                                        color:
-                                            transaction.status === "completed"
-                                                ? "green"
-                                                : transaction.status === "pending"
-                                                    ? "orange"
-                                                    : transaction.status === "failed"
-                                                        ? "red"
-                                                        : "black"
-                                    },
-                                ]}
-                            >
-                                {transaction.status}
-                            </Text>
-
-                        </View>
+                <ScrollView style={styles.walletHistory}>
+                    <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: 15
+                    }}>
+                        <Text style={styles.sectionTitle}>Recent Transactions</Text>
+                        <Icon onPress={handleRefresh} name="refresh" size={25} color="#FFD700" />
                     </View>
-                ))}
 
-                {/* <View style={styles.transactionItem}>
+
+                    {/* Dummy data for wallet history */}
+                    {transactions?.map((transaction, index) => (
+                        <View key={index} style={styles.transactionItem}>
+                            <Icon name={transaction.type === 'credit' ? 'wallet-plus' : 'cash-minus'} size={25} color="#FFD700" />
+                            <View style={styles.transactionDetails}>
+                                <Text style={styles.transactionText}>{transaction.description}</Text>
+                                <Text style={styles.transactionDate}>{new Date(transaction.createdAt).toLocaleDateString()}</Text>
+                            </View>
+                            <View style={styles.transactionDetails}>
+                                <Text style={styles.transactionAmount}>{transaction.type === 'credit' ? '+' : '-'} ₹{transaction.amount}</Text>
+                                <Text
+                                    style={[
+                                        styles.transactionDate,
+                                        {
+                                            color:
+                                                transaction.status === "completed"
+                                                    ? "green"
+                                                    : transaction.status === "pending"
+                                                        ? "orange"
+                                                        : transaction.status === "failed"
+                                                            ? "red"
+                                                            : "black"
+                                        },
+                                    ]}
+                                >
+                                    {transaction.status}
+                                </Text>
+
+                            </View>
+                        </View>
+                    ))}
+
+                    {/* <View style={styles.transactionItem}>
                     <Icon name="cash-minus" size={25} color="#FFD700" />
                     <View style={styles.transactionDetails}>
                         <Text style={styles.transactionText}>Withdrawn ₹200 from wallet</Text>
@@ -104,16 +113,17 @@ const WalletScreen = () => {
                     <Text style={styles.transactionAmount}>-₹200</Text>
                 </View> */}
 
-                {/* Add more dummy transactions as needed */}
-            </ScrollView>
-        </View>
+                    {/* Add more dummy transactions as needed */}
+                </ScrollView>
+            </View>
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000000', // Dark background
+        // backgroundColor: '#000000', // Dark background
         padding: 20,
     },
     header: {

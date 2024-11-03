@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import OpenPlayTab from './OpenPlay';
 import CrossPlay from './CrossPlay';
 import Jantari from '../components/Jantari';
@@ -17,82 +17,92 @@ const GamePlay = ({ route }) => {
 
 
     return (
-        <View style={styles.container}>
-            <View style={styles.tabsContainer}>
-                <TouchableOpacity
-                    onPress={() => handleTabChange('jantari')}
-                    style={[
-                        styles.tabButton,
-                        activeTab === 'jantari' && styles.activeTabButton
-                    ]}
-                >
-                    <Text
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                <View style={styles.tabsContainer}>
+                    <TouchableOpacity
+                        onPress={() => handleTabChange('jantari')}
                         style={[
-                            styles.tabText,
-                            activeTab === 'jantari' && styles.activeTabText
+                            styles.tabButton,
+                            activeTab === 'jantari' && styles.activeTabButton
                         ]}
                     >
-                        JANTARI
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => handleTabChange('open_play')}
-                    style={[
-                        styles.tabButton,
-                        activeTab === 'open_play' && styles.activeTabButton
-                    ]}
-                >
-                    <Text
+                        <Text
+                            style={[
+                                styles.tabText,
+                                activeTab === 'jantari' && styles.activeTabText
+                            ]}
+                        >
+                            JANTARI
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => handleTabChange('open_play')}
                         style={[
-                            styles.tabText,
-                            activeTab === 'open_play' && styles.activeTabText
+                            styles.tabButton,
+                            activeTab === 'open_play' && styles.activeTabButton
                         ]}
                     >
-                        OPEN PLAY
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => handleTabChange('cross')}
-                    style={[
-                        styles.tabButton,
-                        activeTab === 'cross' && styles.activeTabButton
-                    ]}
-                >
-                    <Text
+                        <Text
+                            style={[
+                                styles.tabText,
+                                activeTab === 'open_play' && styles.activeTabText
+                            ]}
+                        >
+                            OPEN PLAY
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => handleTabChange('cross')}
                         style={[
-                            styles.tabText,
-                            activeTab === 'cross' && styles.activeTabText
+                            styles.tabButton,
+                            activeTab === 'cross' && styles.activeTabButton
                         ]}
                     >
-                        CROSS
-                    </Text>
-                </TouchableOpacity>
+                        <Text
+                            style={[
+                                styles.tabText,
+                                activeTab === 'cross' && styles.activeTabText
+                            ]}
+                        >
+                            CROSS
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+                <Text style={styles.title}>{name}</Text>
+
+                {activeTab === 'jantari' && (
+                    <Jantari game_id={game_id} alert={alert} setAlert={setAlert} />
+                )}
+
+                {activeTab === 'open_play' && (
+                    <OpenPlayTab game_id={game_id} alert={alert} setAlert={setAlert} />
+                )}
+
+                {activeTab === 'cross' && (
+                    <CrossPlay game_id={game_id} alert={alert} setAlert={setAlert} />
+                )}
+
+                {alert && <CustomAlert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
+
             </View>
-
-            <Text style={styles.title}>{name}</Text>
-
-            {activeTab === 'jantari' && (
-                <Jantari game_id={game_id} alert={alert} setAlert={setAlert} />
-            )}
-
-            {activeTab === 'open_play' && (
-                <OpenPlayTab game_id={game_id} alert={alert} setAlert={setAlert} />
-            )}
-
-            {activeTab === 'cross' && (
-                <CrossPlay game_id={game_id} alert={alert} setAlert={setAlert} />
-            )}
-
-            {alert && <CustomAlert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
-
-        </View>
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'black',
+        // backgroundColor: 'black',
         paddingHorizontal: 16,
         paddingBottom: 16,
     },

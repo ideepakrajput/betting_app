@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ImageBackground } from 'react-native';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -123,204 +123,214 @@ const Transactions = ({ navigation, route }) => {
     }
 
     return (
-        <View style={styles.container}>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
 
-            {/* Tabs */}
-            <View style={styles.tabsContainer}>
-                <TouchableOpacity
-                    onPress={() => handleTabChange('addMoney')}
-                    style={[
-                        styles.tabButton,
-                        activeTab === 'addMoney' && styles.activeTabButton
-                    ]}
-                >
-                    <Text
+                {/* Tabs */}
+                <View style={styles.tabsContainer}>
+                    <TouchableOpacity
+                        onPress={() => handleTabChange('addMoney')}
                         style={[
-                            styles.tabText,
-                            activeTab === 'addMoney' && styles.activeTabText
+                            styles.tabButton,
+                            activeTab === 'addMoney' && styles.activeTabButton
                         ]}
                     >
-                        ADD MONEY
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => handleTabChange('withdrawMoney')}
-                    style={[
-                        styles.tabButton,
-                        activeTab === 'withdrawMoney' && styles.activeTabButton
-                    ]}
-                >
-                    <Text
+                        <Text
+                            style={[
+                                styles.tabText,
+                                activeTab === 'addMoney' && styles.activeTabText
+                            ]}
+                        >
+                            ADD MONEY
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => handleTabChange('withdrawMoney')}
                         style={[
-                            styles.tabText,
-                            activeTab === 'withdrawMoney' && styles.activeTabText
+                            styles.tabButton,
+                            activeTab === 'withdrawMoney' && styles.activeTabButton
                         ]}
                     >
-                        WITHDRAW MONEY
-                    </Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Tab Content */}
-            {activeTab === 'addMoney' ? (
-                <>{step === 1 ?
-                    (<ScrollView>
-                        <View style={styles.addMoneyContainer}>
-                            <View style={styles.moneySection}>
-                                <Icon name="cash-multiple" size={80} color="#FFD700" />
-                                <Text style={styles.sectionTitle}>ADD AMOUNT</Text>
-                                <Text style={styles.noteText}>Note: Minimum add amount INR 200</Text>
-                            </View>
-
-                            <TextInput
-                                placeholder="Amount"
-                                placeholderTextColor="#888"
-                                style={styles.input}
-                                keyboardType="numeric"
-                                value={amount}
-                                onChangeText={setAmount}
-                            />
-
-                            <View style={styles.buttonRow}>
-                                {[500, 2000, 5000, 10000].map((value) => (
-                                    <Button
-                                        mode="contained"
-                                        key={value}
-                                        style={styles.amountButton}
-                                        onPress={() => setAmount(String(value))}
-                                    >
-                                        ₹{value}
-                                    </Button>
-                                ))}
-                            </View>
-
-                            <Button
-                                textColor='#111111'
-                                mode="contained"
-                                onPress={() => handleNextStep()}
-                                style={styles.payButton}
-                            >
-                                + PAY NOW
-                            </Button>
-
-                            {/* Bonus Section */}
-                            {amount >= 2000 && (
-                                <Text style={styles.bonusText}>
-                                    Bonus Amount: ₹{calculateBonus(amount)}
-                                </Text>
-                            )}
-                        </View>
-
-                        {/* Offer Section */}
-                        <View style={styles.offerContainer}>
-                            <Text style={[styles.offerHeading, { color: "#32CD32" }]}>
-                                ₹2000 से ₹5000 ऐड करें MONEY
-                            </Text>
-                            <Text style={styles.offerHeading}>
-                                और ₹100 एक्स्ट्रा कैशबैक पाएं!
-                            </Text>
-                            <Text style={[styles.offerHeading, { color: "#32CD32", marginTop: 20 }]}>
-                                ₹5000 से ₹10000 ऐड करें MONEY
-                            </Text>
-                            <Text style={styles.offerHeading}>
-                                और ₹500 एक्स्ट्रा कैशबैक पाएं!
-                            </Text>
-                            <Text style={[styles.offerHeading, { color: "#32CD32", marginTop: 20 }]}>
-                                अभी ऑफर का लाभ उठाएं!
-                            </Text>
-                            <Text style={styles.offerHeading}>
-                                अतिरिक्त कैशबैक का आनंद लें!
-                            </Text>
-                            {/* <Text style={[styles.offerText, { color: "#32CD32", marginTop: 10 }]}>
-                                Add above ₹2000, get 1% extra cashback!
-                            </Text> */}
-                            <Text style={[styles.offerText, { color: "#4169E1", marginTop: 10 }]}>
-                                Grab the offer now!
-                            </Text>
-                            <Text style={[styles.offerText, { color: "#32CD32", marginTop: 20 }]}>Enjoy extra cashback!</Text>
-                            <Text style={[styles.offerText, { color: "#006BFF", marginVertical: 20 }]}>UPI Payments Options :</Text>
-                            <Text style={[styles.offerText, { color: "#32CD32" }]}>Google Pay (GPay) Paytm PhonePe!</Text>
-                            <Text style={[styles.offerText, { color: "#32CD32" }]}>BHIM UPI Multiple Apps Supported!</Text>
-                        </View>
-                    </ScrollView>
-                    ) : (
-                        <ScrollView>
-                            <View style={styles.addMoneyContainer}>
-                                <Text style={[styles.heading, { textAlign: 'center', fontWeight: 'bold', borderBottomColor: '#fff', borderBottomWidth: 1, alignSelf: 'center', marginBottom: 10 }]}>PAY TO BELOW UPI</Text>
-                                <Text style={[styles.heading, { textAlign: 'center', color: "#fff", fontWeight: 'bold' }]}>{UPIDetails.upi_id}</Text>
-                                <Image src={`${API_URL}${UPIDetails.upi_image}`} style={styles.upiImage} />
-                                <Text style={[styles.heading, { textAlign: 'center', fontWeight: 'bold' }]}>ENTER TRANSACTION DETAILS</Text>
-                                <TextInput
-                                    placeholder="Transaction ID"
-                                    placeholderTextColor="#888"
-                                    style={styles.input}
-                                    value={transactionId}
-                                    onChangeText={setTransactionId}
-                                />
-                                <Button
-                                    mode="contained"
-                                    onPress={() => handleAddMoney()}
-                                    style={styles.payButton}
-                                >
-                                    VERIFY TRANSACTION
-                                </Button>
-                            </View>
-                        </ScrollView>
-                    )
-                }
-                </>
-            ) : (
-                <View style={styles.withdrawContainer}>
-                    <View style={styles.moneySection}>
-                        <Icon name="cash-multiple" size={80} color="#FFD700" />
-                        <Text style={styles.sectionTitle}>WITHDRAWAL AMOUNT</Text>
-                        <Text style={styles.noteText}>Note: Minimum withdrawal amount INR 900</Text>
-                    </View>
-                    <TextInput
-                        placeholder="Withdrawal Amount"
-                        placeholderTextColor="#888"
-                        style={styles.input}
-                        keyboardType="numeric"
-                        value={withdrawalAmount}
-                        onChangeText={setWithdrawalAmount}
-                    />
-
-                    {/* Available Amount & Withdrawal Time */}
-                    <View style={styles.withdrawInfo}>
-                        <Text style={styles.availableText}>Available For Withdrawal: ₹ {user?.user?.winning_amount}</Text>
-                        <Text style={styles.timeText}>Withdrawal Time is 10 AM to 4 PM</Text>
-                    </View>
-
-                    {/* Add and Withdraw Money Buttons */}
-                    <View style={styles.buttonSection}>
-                        <Button
-                            mode="contained"
-                            onPress={handleWithdrawMoney}
-                            style={styles.withdrawButton}
-                            labelStyle={styles.buttonText}
+                        <Text
+                            style={[
+                                styles.tabText,
+                                activeTab === 'withdrawMoney' && styles.activeTabText
+                            ]}
                         >
                             WITHDRAW MONEY
-                        </Button>
-                    </View>
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-            )
-            }
 
-            {alertVisible && (
-                <CustomAlert
-                    type={alertType}
-                    message={alertMessage}
-                    onClose={() => setAlertVisible(false)}
-                />
-            )}
-        </View >
+                {/* Tab Content */}
+                {activeTab === 'addMoney' ? (
+                    <>{step === 1 ?
+                        (<ScrollView>
+                            <View style={styles.addMoneyContainer}>
+                                <View style={styles.moneySection}>
+                                    <Icon name="cash-multiple" size={80} color="#FFD700" />
+                                    <Text style={styles.sectionTitle}>ADD AMOUNT</Text>
+                                    <Text style={styles.noteText}>Note: Minimum add amount INR 200</Text>
+                                </View>
+
+                                <TextInput
+                                    placeholder="Amount"
+                                    placeholderTextColor="#888"
+                                    style={styles.input}
+                                    keyboardType="numeric"
+                                    value={amount}
+                                    onChangeText={setAmount}
+                                />
+
+                                <View style={styles.buttonRow}>
+                                    {[500, 2000, 5000, 10000].map((value) => (
+                                        <Button
+                                            mode="contained"
+                                            key={value}
+                                            style={styles.amountButton}
+                                            onPress={() => setAmount(String(value))}
+                                        >
+                                            ₹{value}
+                                        </Button>
+                                    ))}
+                                </View>
+
+                                <Button
+                                    textColor='#111111'
+                                    mode="contained"
+                                    onPress={() => handleNextStep()}
+                                    style={styles.payButton}
+                                >
+                                    + PAY NOW
+                                </Button>
+
+                                {/* Bonus Section */}
+                                {amount >= 2000 && (
+                                    <Text style={styles.bonusText}>
+                                        Bonus Amount: ₹{calculateBonus(amount)}
+                                    </Text>
+                                )}
+                            </View>
+
+                            {/* Offer Section */}
+                            <View style={styles.offerContainer}>
+                                <Text style={[styles.offerHeading, { color: "#32CD32" }]}>
+                                    ₹2000 से ₹5000 ऐड करें MONEY
+                                </Text>
+                                <Text style={styles.offerHeading}>
+                                    और ₹100 एक्स्ट्रा कैशबैक पाएं!
+                                </Text>
+                                <Text style={[styles.offerHeading, { color: "#32CD32", marginTop: 20 }]}>
+                                    ₹5000 से ₹10000 ऐड करें MONEY
+                                </Text>
+                                <Text style={styles.offerHeading}>
+                                    और ₹500 एक्स्ट्रा कैशबैक पाएं!
+                                </Text>
+                                <Text style={[styles.offerHeading, { color: "#32CD32", marginTop: 20 }]}>
+                                    अभी ऑफर का लाभ उठाएं!
+                                </Text>
+                                <Text style={styles.offerHeading}>
+                                    अतिरिक्त कैशबैक का आनंद लें!
+                                </Text>
+                                {/* <Text style={[styles.offerText, { color: "#32CD32", marginTop: 10 }]}>
+                                Add above ₹2000, get 1% extra cashback!
+                            </Text> */}
+                                <Text style={[styles.offerText, { color: "#4169E1", marginTop: 10 }]}>
+                                    Grab the offer now!
+                                </Text>
+                                <Text style={[styles.offerText, { color: "#32CD32", marginTop: 20 }]}>Enjoy extra cashback!</Text>
+                                <Text style={[styles.offerText, { color: "#006BFF", marginVertical: 20 }]}>UPI Payments Options :</Text>
+                                <Text style={[styles.offerText, { color: "#32CD32" }]}>Google Pay (GPay) Paytm PhonePe!</Text>
+                                <Text style={[styles.offerText, { color: "#32CD32" }]}>BHIM UPI Multiple Apps Supported!</Text>
+                            </View>
+                        </ScrollView>
+                        ) : (
+                            <ScrollView>
+                                <View style={styles.addMoneyContainer}>
+                                    <Text style={[styles.heading, { textAlign: 'center', fontWeight: 'bold', borderBottomColor: '#fff', borderBottomWidth: 1, alignSelf: 'center', marginBottom: 10 }]}>PAY TO BELOW UPI</Text>
+                                    <Text style={[styles.heading, { textAlign: 'center', color: "#fff", fontWeight: 'bold' }]}>{UPIDetails.upi_id}</Text>
+                                    <Image src={`${API_URL}${UPIDetails.upi_image}`} style={styles.upiImage} />
+                                    <Text style={[styles.heading, { textAlign: 'center', fontWeight: 'bold' }]}>ENTER TRANSACTION DETAILS</Text>
+                                    <TextInput
+                                        placeholder="Transaction ID"
+                                        placeholderTextColor="#888"
+                                        style={styles.input}
+                                        value={transactionId}
+                                        onChangeText={setTransactionId}
+                                    />
+                                    <Button
+                                        mode="contained"
+                                        onPress={() => handleAddMoney()}
+                                        style={styles.payButton}
+                                    >
+                                        VERIFY TRANSACTION
+                                    </Button>
+                                </View>
+                            </ScrollView>
+                        )
+                    }
+                    </>
+                ) : (
+                    <View style={styles.withdrawContainer}>
+                        <View style={styles.moneySection}>
+                            <Icon name="cash-multiple" size={80} color="#FFD700" />
+                            <Text style={styles.sectionTitle}>WITHDRAWAL AMOUNT</Text>
+                            <Text style={styles.noteText}>Note: Minimum withdrawal amount INR 900</Text>
+                        </View>
+                        <TextInput
+                            placeholder="Withdrawal Amount"
+                            placeholderTextColor="#888"
+                            style={styles.input}
+                            keyboardType="numeric"
+                            value={withdrawalAmount}
+                            onChangeText={setWithdrawalAmount}
+                        />
+
+                        {/* Available Amount & Withdrawal Time */}
+                        <View style={styles.withdrawInfo}>
+                            <Text style={styles.availableText}>Available For Withdrawal: ₹ {user?.user?.winning_amount}</Text>
+                            <Text style={styles.timeText}>Withdrawal Time is 10 AM to 4 PM</Text>
+                        </View>
+
+                        {/* Add and Withdraw Money Buttons */}
+                        <View style={styles.buttonSection}>
+                            <Button
+                                mode="contained"
+                                onPress={handleWithdrawMoney}
+                                style={styles.withdrawButton}
+                                labelStyle={styles.buttonText}
+                            >
+                                WITHDRAW MONEY
+                            </Button>
+                        </View>
+                    </View>
+                )
+                }
+
+                {alertVisible && (
+                    <CustomAlert
+                        type={alertType}
+                        message={alertMessage}
+                        onClose={() => setAlertVisible(false)}
+                    />
+                )}
+            </View >
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000000',
+        // backgroundColor: '#000000',
         padding: 10,
     },
     tabsContainer: {
