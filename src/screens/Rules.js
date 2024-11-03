@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, ImageBackground } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 
 const Rules = () => {
@@ -17,9 +17,9 @@ const Rules = () => {
                 <Text style={styles.title}>Game and Payment Guidelines</Text>
                 <ScrollView>
                     <Card style={styles.card}>
-                        <Text style={styles.header}>SK Matka Payment Rules</Text>
+                        <Text style={styles.header}>Shiva Gold Matka Payment Rules</Text>
 
-                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Minimum Deposit: ₹200 (Automatic)</Text></Text>
+                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Minimum Deposit: ₹300</Text></Text>
 
                         <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Minimum Withdrawal: ₹900</Text></Text>
                         <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Maximum Withdrawal per Day: ₹10 Lakhs</Text></Text>
@@ -32,9 +32,9 @@ const Rules = () => {
                         <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Jodi Rate: ₹100 for ₹9,000</Text></Text>
                         <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Harup Rate: ₹100 for ₹900</Text></Text>
 
-                        <Text style={styles.footerText}>SK DREAM</Text>
-                        <Text style={styles.footerText}>SK MATKA</Text>
-                        <Text style={styles.footerText}>SK MATKA</Text>
+                        <Text style={styles.footerText}>Shiva Gold DREAM</Text>
+                        <Text style={styles.footerText}>Shiva Gold MATKA</Text>
+                        <Text style={styles.footerText}>Shiva Gold MATKA</Text>
                     </Card>
                 </ScrollView>
             </View>

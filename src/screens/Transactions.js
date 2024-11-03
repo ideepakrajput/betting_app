@@ -60,6 +60,12 @@ const Transactions = ({ navigation, route }) => {
             setAlertMessage('Please enter an amount.');
             return;
         }
+        if (amount < 300) {
+            setAlertVisible(true);
+            setAlertType('error');
+            setAlertMessage('Minimum amount should be 300');
+            return;
+        }
         setStep(step + 1);
     };
 
@@ -100,6 +106,18 @@ const Transactions = ({ navigation, route }) => {
     }
 
     const handleWithdrawMoney = async () => {
+        if (!withdrawalAmount) {
+            setAlertVisible(true);
+            setAlertType('error');
+            setAlertMessage('Please enter an amount.');
+            return;
+        }
+        if (withdrawalAmount < 900) {
+            setAlertVisible(true);
+            setAlertType('error');
+            setAlertMessage('Minimum amount should be 900');
+            return;
+        }
         try {
             const response = await withdrawMoney(withdrawalAmount);
             if (response.success) {
@@ -178,7 +196,7 @@ const Transactions = ({ navigation, route }) => {
                                 <View style={styles.moneySection}>
                                     <Icon name="cash-multiple" size={80} color="#FFD700" />
                                     <Text style={styles.sectionTitle}>ADD AMOUNT</Text>
-                                    <Text style={styles.noteText}>Note: Minimum add amount INR 200</Text>
+                                    <Text style={styles.noteText}>Note: Minimum add amount INR 300</Text>
                                 </View>
 
                                 <TextInput
