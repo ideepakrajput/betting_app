@@ -33,7 +33,7 @@ import NotificationToggle from '../components/NotificationToggle';
 import { me } from '../services/endPoints';
 import GamePlay from '../screens/GamePlay';
 import SplashScreen from '../screens/SplashScreen';
-import BetHistory from '../screens/BetHistory';
+import BidHistory from '../screens/BidHistory';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -137,7 +137,7 @@ const WalletStack = () => (
 
 const BidHistoryStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="BetHistoryScreen" component={BetHistory} />
+        <Stack.Screen name="BidHistoryScreen" component={BidHistory} />
     </Stack.Navigator>
 );
 
@@ -186,20 +186,20 @@ const DrawerContent = (props) => {
         Clipboard.setString(user?.user?.ref_id);
     };
     const shareContent = `India ka No.1 Trusted App!
-                            🕹   Shiva Gold  🕹
+🕹   Shiva Gold  🕹
 
-                            100% Withdrawal Guaranteed,
-                            Personally Tested, 100% Secure 🔐
+100% Withdrawal Guaranteed,
+Personally Tested, 100% Secure 🔐
 
-                            गली, देसावर, फरीदाबाद, इंडिया बाजार,
-                            दुबई बाजार और बहुत सारी गेम!
-                            Shiva Gold पर खेलें
-                            और 100% विड्रॉल गारंटीड पाएं
+गली, देसावर, फरीदाबाद, इंडिया बाजार,
+दुबई बाजार और बहुत सारी गेम!
+Shiva Gold पर खेलें
+और 100% विड्रॉल गारंटीड पाएं
 
-                            Use My referral code: ${user?.user?.ref_id} 
+Use My referral code: ${user?.user?.ref_id} 
 
-                            Download Now 👇🏻
-                            Link to the App`;
+Download Now 👇🏻
+Link to the App`;
 
     const shareWithSheet = async () => {
         try {

@@ -6,7 +6,7 @@ import { useFocusEffect } from '@react-navigation/native'
 const { width } = Dimensions.get('window')
 const COLUMN_WIDTH = (width - 48) / 2
 
-const BetHistory = () => {
+const BidHistory = () => {
     const [betHistory, setBetHistory] = useState([])
     const [loading, setLoading] = useState(true)
     const [totalBidAmount, setTotalBidAmount] = useState(0)
@@ -68,7 +68,7 @@ const BetHistory = () => {
         >
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headerText}>Bet History</Text>
+                    <Text style={styles.headerText}>Bid History</Text>
                     <Text style={styles.totalAmount}>Total Amount: ₹{totalBidAmount}</Text>
                 </View>
                 <FlatList
@@ -164,4 +164,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default BetHistory
+export default BidHistory

@@ -13,20 +13,20 @@ const ReferAndEarn = () => {
         Clipboard.setString(user?.user?.ref_id);
     };
     const shareContent = `India ka No.1 Trusted App!
-                            🕹   Shiva Gold  🕹
+🕹   Shiva Gold  🕹
 
-                            100% Withdrawal Guaranteed,
-                            Personally Tested, 100% Secure 🔐
+100% Withdrawal Guaranteed,
+Personally Tested, 100% Secure 🔐
 
-                            गली, देसावर, फरीदाबाद, इंडिया बाजार,
-                            दुबई बाजार और बहुत सारी गेम!
-                            Shiva Gold पर खेलें
-                            और 100% विड्रॉल गारंटीड पाएं
+गली, देसावर, फरीदाबाद, इंडिया बाजार,
+दुबई बाजार और बहुत सारी गेम!
+Shiva Gold पर खेलें
+और 100% विड्रॉल गारंटीड पाएं
 
-                            Use My referral code: ${user?.user?.ref_id} 
+Use My referral code: ${user?.user?.ref_id} 
 
-                            Download Now 👇🏻
-                            Link to the App`;
+Download Now 👇🏻
+Link to the App`;
 
     const shareWithSheet = async () => {
         try {
@@ -68,7 +68,7 @@ const ReferAndEarn = () => {
                 {/* <Text style={styles.title}>Refer & Earn</Text> */}
                 <ScrollView>
                     <Card style={styles.card}>
-                        <Text style={styles.title}>Share Shiva Gold with Friends, Secure & Trusted</Text>
+                        <Text style={styles.title}>Share <Text style={{ color: "#FFD700", fontWeight: 'bold' }}>Shiva Gold</Text> with Friends, Secure & Trusted</Text>
                         <Text style={styles.subtitle}>1% Commission on Every Deposit, Forever Unlock Exclusive Rewards</Text>
 
                         <Button

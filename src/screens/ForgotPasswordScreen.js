@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ImageBackground } from 'react-native';
 import { TextInput, Button, Text, useTheme } from 'react-native-paper';
 
 const ForgotPasswordScreen = () => {
@@ -47,15 +47,7 @@ const ForgotPasswordScreen = () => {
     };
 
     const renderStep1 = () => (
-        <ImageBackground
-            source={require('../assets/bg.jpg')}
-            style={{
-                flex: 1,
-                width: '100%',
-                height: '100%'
-            }}
-            resizeMode="cover"
-        >
+        <>
             <Text style={styles.title}>Forgot Password</Text>
             <Text style={styles.subtitle}>Enter your phone number to receive a verification code</Text>
             <TextInput
@@ -76,7 +68,7 @@ const ForgotPasswordScreen = () => {
             >
                 Send Verification Code
             </Button>
-        </ImageBackground>
+        </>
     );
 
     const renderStep2 = () => (
@@ -143,12 +135,22 @@ const ForgotPasswordScreen = () => {
     );
 
     return (
-        <View style={styles.container}>
-            {step === 1 && renderStep1()}
-            {step === 2 && renderStep2()}
-            {step === 3 && renderStep3()}
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
-        </View>
+        <ImageBackground
+            source={require('../assets/bg.jpg')}
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%'
+            }}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                {step === 1 && renderStep1()}
+                {step === 2 && renderStep2()}
+                {step === 3 && renderStep3()}
+                {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            </View>
+        </ImageBackground>
     );
 };
 
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         paddingTop: 50,
-        backgroundColor: '#000000', // Black background
+        // backgroundColor: '#000000', // Black background
     },
     title: {
         fontSize: 24,
