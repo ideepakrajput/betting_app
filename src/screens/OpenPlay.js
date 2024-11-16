@@ -204,7 +204,7 @@ const OpenPlayTab = ({ game_id, setAlert }) => {
         }
         else {
             console.log(combinations);
-            const response = await OpenPlayBets({ bazaarId: game_id, withPalti, harupA: andarSelected, harupB: baharSelected, data: combinations });
+            const response = await OpenPlayBets({ bazaarId: game_id, withPalti, harupA: andarSelected, harupB: baharSelected, data: combinations, totalAmount });
             if (response.success) {
                 dispatch(updateBalance(updatedBalance));
                 setAlert({

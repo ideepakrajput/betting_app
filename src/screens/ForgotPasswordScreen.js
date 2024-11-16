@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
 import { TextInput, Button, Text, useTheme } from 'react-native-paper';
+import CustomAlert from '../components/CustomAlert';
+import { resetPassword, sentOTP } from '../services/endPoints';
+import { useNavigation } from '@react-navigation/native';
 
 const ForgotPasswordScreen = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -10,18 +13,39 @@ const ForgotPasswordScreen = () => {
     const [step, setStep] = useState(1);
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const [email, setEmail] = useState('');
+    const [response, setResponse] = useState(null);
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertType, setAlertType] = useState('success');
+    const [alertMessage, setAlertMessage] = useState('');
     const theme = useTheme();
+    const navigation = useNavigation();
 
-    const handleSendOTP = () => {
+    const handleSendOTP = async () => {
         // Basic phone number validation (10 digits)
         const phoneRegex = /^[6-9]\d{9}$/;
         if (!phoneRegex.test(phoneNumber)) {
             setError('Please enter a valid phone number.');
             return;
         }
-        console.log('Sending OTP to:', phoneNumber);
-        setError('');
-        setStep(2);
+        try {
+            const response = await sentOTP(phoneNumber);
+            console.log(response);
+
+            if (response.success) {
+                setStep(2);
+                setError('');
+                setAlertType('success');
+                setEmail(response.email);
+                setResponse({ otp: response.otp });
+                setAlertMessage('OTP sent to your email : ' + response.email);
+                setAlertVisible(true);
+            }
+        } catch (error) {
+            setAlertType('error');
+            setAlertMessage('Failed to send OTP');
+            setAlertVisible(true);
+        }
     };
 
     const handleVerifyOTP = () => {
@@ -30,26 +54,53 @@ const ForgotPasswordScreen = () => {
             setError('Please enter the 4-digit OTP.');
             return;
         }
-        console.log('Verifying OTP:', otp);
-        setError('');
-        setStep(3);
+        try {
+            if (otp == response.otp) { // Compare with OTP from API response
+                setError('');
+                setStep(3);
+                setAlertType('success');
+                setAlertMessage('OTP verified successfully');
+                setAlertVisible(true);
+            } else {
+                setAlertType('error');
+                setAlertMessage('Invalid OTP');
+                setAlertVisible(true);
+            }
+        } catch (error) {
+            setAlertType('error');
+            setAlertMessage('OTP verification failed');
+            setAlertVisible(true);
+        }
     };
 
-    const handleResetPassword = () => {
+    const handleResetPassword = async () => {
         // Validate new password and confirmation
         if (newPassword !== confirmPassword) {
             setError('Passwords do not match!');
             return;
         }
-        console.log('Resetting password:', newPassword);
-        setError('');
-        // Proceed with password reset logic
+        try {
+            const response = await resetPassword(newPassword, phoneNumber);
+            console.log(response);
+
+            if (response.success) {
+                setAlertType('success');
+                setAlertMessage('Reset password successfully');
+                setAlertVisible(true);
+                setTimeout(() => navigation.navigate('Login'), 2000);
+            }
+        } catch (error) {
+            setAlertType('error');
+            setAlertMessage('Failed to reset password');
+            setAlertVisible(true);
+            setTimeout(() => navigation.navigate('Login'), 2000);
+        }
     };
 
     const renderStep1 = () => (
         <>
             <Text style={styles.title}>Forgot Password</Text>
-            <Text style={styles.subtitle}>Enter your phone number to receive a verification code</Text>
+            <Text style={styles.subtitle}>Enter your phone number to receive a verification code to registered email</Text>
             <TextInput
                 label="Phone Number"
                 value={phoneNumber}
@@ -74,7 +125,7 @@ const ForgotPasswordScreen = () => {
     const renderStep2 = () => (
         <>
             <Text style={styles.title}>Verify OTP</Text>
-            <Text style={styles.subtitle}>Enter the 4-digit code sent to your phone number</Text>
+            <Text style={styles.subtitle}>Enter the 4-digit code sent to {email}</Text>
             <TextInput
                 label="Verification Code"
                 value={otp}
@@ -150,6 +201,13 @@ const ForgotPasswordScreen = () => {
                 {step === 3 && renderStep3()}
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
             </View>
+            {alertVisible && (
+                <CustomAlert
+                    type={alertType}
+                    message={alertMessage}
+                    onClose={() => setAlertVisible(false)}
+                />
+            )}
         </ImageBackground>
     );
 };

@@ -3,17 +3,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
 import { Button, Text } from 'react-native-paper';
-import { ScrollView } from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import { getBazaars } from '../services/endPoints';
+import firebase from '@react-native-firebase/app';
+
 const HomeScreen = () => {
     const user = useSelector(state => state.user);
     const navigation = useNavigation();
     const [bazaars, setBazaars] = useState([]);
     const [liveResults, setLiveResults] = useState([]);
+    const [waiting, setWaiting] = useState(false);
     const [liveGames, setLiveGames] = useState([]);
     const [upcomingGames, setUpcomingGames] = useState([]);
     const [lastResults, setLastResults] = useState([]);
@@ -49,47 +52,75 @@ const HomeScreen = () => {
         }
     };
 
+
     useEffect(() => {
         getBazaarData();
+        const intervalId = setInterval(() => {
+            getBazaarData();
+        }, 1 * 60000);
+        return () => clearInterval(intervalId);
     }, []);
 
     const getBazaarData = async () => {
         try {
-            const response = await getBazaars();
+            const response = await getBazaars() || [];
+
             const currentTime = new Date();
-            currentTime.setHours(currentTime.getHours() - 1);
             const currentTimeString = new Date();
 
-            const categorizedGames = response.data.reduce((acc, game) => {
-                const [openHour, openMinute] = game.open_time.split(':').map(Number);
-                const [closeHour, closeMinute] = game.close_time.split(':').map(Number);
-                const [resultHour, resultMinute] = game.result_time.split(':').map(Number);
-                const openTime = new Date(currentTimeString.setHours(openHour, openMinute, 0, 0));
-                const closeTime = new Date(currentTimeString.setHours(closeHour, closeMinute, 0, 0));
-                const resultTime = new Date(currentTimeString.setHours(resultHour, resultMinute, 0, 0));
+            // Helper function to create comparable datetime
+            const createDateTime = (timeStr) => {
+                const [hours, minutes] = timeStr.split(':').map(Number);
+                const date = new Date(currentTimeString);
+                // Handle midnight crossing - if hour is less than 12, assume it's next day
+                if (hours < 12) {
+                    date.setDate(date.getDate() + 1);
+                }
+                date.setHours(hours, minutes, 0, 0);
+                return date;
+            };
 
-                if (resultTime <= currentTime) {
-                    acc.liveResults.push(game);
-                } else if (openTime <= currentTime && currentTime <= closeTime) {
-                    acc.liveGames.push(game);
-                } else if (currentTime < openTime) {
-                    acc.liveGames.push(game);
-                } else if (currentTime < resultTime) {
-                    acc.lastResults.push(game);
+            const categorizedGames = response?.data?.reduce((acc, game) => {
+                const openTime = createDateTime(game.open_time);
+                const closeTime = createDateTime(game.close_time);
+                const resultTime = createDateTime(game.result_time);
+
+                if (openTime <= currentTime && closeTime >= currentTime && resultTime >= currentTime) {
+                    acc.liveGames.push({ ...game, closeDateTime: closeTime });
+                } else if (currentTime < openTime && closeTime >= currentTime && resultTime >= currentTime) {
+                    acc.upcomingGames.push({ ...game, closeDateTime: closeTime });
+                } else if (openTime <= currentTime && closeTime <= currentTime && resultTime <= currentTime) {
+                    acc.lastResults.push({ ...game, closeDateTime: closeTime });
+                } else if (closeTime < resultTime && resultTime < currentTime) {
+                    acc.liveResults.push({ ...game, closeDateTime: closeTime });
+                    setWaiting(true);
                 }
                 return acc;
             }, { liveResults: [], liveGames: [], upcomingGames: [], lastResults: [] });
 
-            setLiveResults(categorizedGames.liveResults);
-            setLiveGames(categorizedGames.liveGames);
-            setUpcomingGames(categorizedGames.upcomingGames);
-            setLastResults(categorizedGames.lastResults);
+            // Sort by close time for lastResults
+            const sortByCloseTime = (a, b) => b.closeDateTime - a.closeDateTime;
+
+            // Sort by open time for upcoming games
+            const sortByOpenTime = (a, b) => {
+                const aTime = createDateTime(a.open_time);
+                const bTime = createDateTime(b.open_time);
+                return aTime - bTime;
+            };
+
+            setLiveResults(categorizedGames?.liveResults?.sort(sortByCloseTime));
+            setLiveGames(categorizedGames?.liveGames?.sort(sortByCloseTime));
+            setUpcomingGames(categorizedGames?.upcomingGames?.sort(sortByOpenTime));
+            setLastResults(categorizedGames?.lastResults?.sort(sortByCloseTime));
+
         } catch (error) {
             console.error('Error fetching bazaars:', error);
         }
     };
 
-
+    if (!firebase.apps.length) {
+        firebase.initializeApp();
+    }
 
     return (
         <View style={styles.container}>
@@ -153,10 +184,15 @@ const HomeScreen = () => {
                     {/* Live Results Section */}
                     <Text style={styles.categoryHeader}>Live Results</Text>
                     {/* {liveResults.map((game) => ( */}
-                    <View key={liveResults[0]?._id} style={styles.gameCard}>
-                        <Text style={styles.gameName}>{liveResults[0]?.name}</Text>
-                        <Text style={styles.gameResult}>{liveResults[0]?.result || 77}</Text>
-                    </View>
+                    {lastResults.length > 0 &&
+                        <View key={lastResults[0]?._id} style={styles.gameCard}>
+                            <View>
+                                <Text style={styles.gameName}>{lastResults[0]?.name}</Text>
+                                {waiting && <Text style={styles.timeInfo}>Betting is closed. Result will announce Soon</Text>}
+                            </View>
+                            <Text style={styles.gameResult}>{waiting ? "Wait" : lastResults[0]?.result || 77}</Text>
+                        </View>
+                    }
                     {/* ))} */}
 
                     {/* Live Games Section */}
@@ -186,22 +222,38 @@ const HomeScreen = () => {
 
                     {/* Upcoming Games Section */}
                     <Text style={styles.categoryHeader}>Upcoming Games</Text>
-                    {upcomingGames.map((game) => (
-                        <View key={game._id} style={[styles.gameCard, {}]}>
-                            <View>
-                                <Text style={styles.gameName}>{game.name}</Text>
-                                <Text style={styles.timeInfo}>Open Time : {game.open_time}</Text>
-                                <Text style={styles.timeInfo}>Close Time : {game.close_time}</Text>
-                                <Text style={styles.timeInfo}>Result Time : {game.result_time}</Text>
+                    <FlatList
+                        data={upcomingGames}
+                        keyExtractor={(item) => item._id}
+                        renderItem={({ item }) => (
+                            <View key={item._id} style={[styles.gameCard, styles.upcomingCard]}>
+                                <View>
+                                    <Text style={[styles.gameName, { textAlign: 'center' }]}>{item.name}</Text>
+                                    <Text style={styles.timeInfo}>Open Time : {item.open_time}</Text>
+                                    <Text style={styles.timeInfo}>Close Time : {item.close_time}</Text>
+                                    <Text style={styles.timeInfo}>Result Time : {item.result_time}</Text>
+                                </View>
                             </View>
-                        </View>
-                    ))}
+                        )}
+                        showsVerticalScrollIndicator={false}
+                        showsHorizontalScrollIndicator={false}
+                        numColumns={2}
+                        columnWrapperStyle={styles.row}
+                        scrollEnabled={false}
+                    />
 
                     {/* Last Results Section */}
                     <Text style={styles.categoryHeader}>Previous Results</Text>
                     {lastResults.map((game) => (
                         <View key={game._id} style={styles.gameCard}>
-                            <Text style={styles.gameName}>{game.name}</Text>
+                            <View>
+                                <Text style={styles.gameName}>{game.name}</Text>
+                                <Text style={styles.timeInfo}>
+                                    Open: {(game.open_time)} |
+                                    Close: {(game.close_time)} |
+                                    Result: {(game.result_time)}
+                                </Text>
+                            </View>
                             <Text style={styles.gameResult}>{game.result || 77}</Text>
                         </View>
                     ))}
@@ -275,7 +327,7 @@ const styles = StyleSheet.create({
     timeInfo: {
         fontSize: 14,
         color: '#ffffff',
-        marginBottom: 10,
+        // marginBottom: 10,
     },
     playButton: {
         backgroundColor: '#FFD700',
@@ -311,6 +363,17 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingHorizontal: 16,
         paddingVertical: 8,
+    },
+    upcomingCard: {
+        flex: 1,
+        margin: 5,
+        width: '48%', // Adjust width to account for margin
+        flexDirection: 'column',
+    },
+    row: {
+        flex: 1,
+        justifyContent: 'space-between',
+        marginHorizontal: -5, // Compensate for card margins
     }
 });
 export default HomeScreen

@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, StyleSheet, ImageBackground } from 'react-native';
+import { View, StyleSheet, ImageBackground, ScrollView } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import SocialLinks from '../components/ContactDetails';
-import { register } from '../services/endPoints.js';
+import { register, verifyEmailOTP } from '../services/endPoints.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../redux/slices/userSlice.js';
@@ -20,6 +20,12 @@ const SignupScreen = () => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertType, setAlertType] = useState('success');
     const [alertMessage, setAlertMessage] = useState('');
+    const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [otp, setOtp] = useState('');
+    const [response, setResponse] = useState(null);
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [showOtpInput, setShowOtpInput] = useState(false);
 
     // State for input validation
     const [nameError, setNameError] = useState('');
@@ -29,11 +35,63 @@ const SignupScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
 
+    const handleVerifyEmail = async () => {
+        setEmailError('');
+
+        if (!email) {
+            setEmailError('Email is required!');
+            return;
+        }
+
+        try {
+            const response = await verifyEmailOTP(email);
+            console.log(response);
+
+            if (response.success) {
+                setShowOtpInput(true);
+                setAlertType('success');
+                setResponse({ otp: response.otp });
+                setAlertMessage('OTP sent to your email');
+                setAlertVisible(true);
+            }
+        } catch (error) {
+            setAlertType('error');
+            setAlertMessage('Failed to send OTP');
+            setAlertVisible(true);
+        }
+    };
+
+    const handleVerifyOTP = async () => {
+        try {
+            if (otp == response.otp) { // Compare with OTP from API response
+                setIsEmailVerified(true);
+                setShowOtpInput(false);
+                setAlertType('success');
+                setAlertMessage('Email verified successfully');
+                setAlertVisible(true);
+            } else {
+                setAlertType('error');
+                setAlertMessage('Invalid OTP');
+                setAlertVisible(true);
+            }
+        } catch (error) {
+            setAlertType('error');
+            setAlertMessage('OTP verification failed');
+            setAlertVisible(true);
+        }
+    };
     const handleSignup = async () => {
         // Reset error messages
         setNameError('');
         setPhoneNumberError('');
         setPasswordError('');
+
+        if (!isEmailVerified) {
+            setAlertType('error');
+            setAlertMessage('Please verify your email first');
+            setAlertVisible(true);
+            return;
+        }
 
         let isValid = true;
 
@@ -58,7 +116,7 @@ const SignupScreen = () => {
         // Stop if validation fails
         if (!isValid) return;
 
-        const userData = { name, phone: phoneNumber, password, referral_code: referralCode };
+        const userData = { name, phone: phoneNumber, password, referral_code: referralCode, email };
         const registerUser = await register(userData);
 
         if (registerUser.success) {
@@ -89,7 +147,7 @@ const SignupScreen = () => {
             }}
             resizeMode="cover"
         >
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <Text style={styles.title}>Create an account</Text>
 
                 <TextInput
@@ -116,6 +174,50 @@ const SignupScreen = () => {
                 />
                 {/* Show validation message for Phone Number */}
                 {phoneNumberError ? <Text style={styles.errorText}>{phoneNumberError}</Text> : null}
+
+                <TextInput
+                    label="Email"
+                    textColor='#fff'
+                    value={email}
+                    onChangeText={setEmail}
+                    style={styles.input}
+                    mode="outlined"
+                    theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                />
+                {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+
+                <Button
+                    mode="contained"
+                    onPress={handleVerifyEmail}
+                    style={[styles.button, { marginBottom: 15 }]}
+                    labelStyle={styles.buttonText}
+                    disabled={isEmailVerified}
+                >
+                    {isEmailVerified ? 'Email Verified' : 'Verify Email'}
+                </Button>
+
+                {showOtpInput && (
+                    <>
+                        <TextInput
+                            label="Enter OTP"
+                            textColor='#fff'
+                            value={otp}
+                            onChangeText={setOtp}
+                            style={styles.input}
+                            mode="outlined"
+                            keyboardType="numeric"
+                            theme={{ colors: { text: '#000000', primary: '#FFD700', background: '#ffffff' } }}
+                        />
+                        <Button
+                            mode="contained"
+                            onPress={handleVerifyOTP}
+                            style={[styles.button, { marginBottom: 15 }]}
+                            labelStyle={styles.buttonText}
+                        >
+                            Verify OTP
+                        </Button>
+                    </>
+                )}
 
                 <TextInput
                     label="Password"
@@ -179,15 +281,15 @@ const SignupScreen = () => {
 
                 <SocialLinks />
 
-                {/* Show custom alert */}
-                {alertVisible && (
-                    <CustomAlert
-                        type={alertType}
-                        message={alertMessage}
-                        onClose={() => setAlertVisible(false)}
-                    />
-                )}
-            </View>
+            </ScrollView>
+            {/* Show custom alert */}
+            {alertVisible && (
+                <CustomAlert
+                    type={alertType}
+                    message={alertMessage}
+                    onClose={() => setAlertVisible(false)}
+                />
+            )}
         </ImageBackground>
     );
 };

@@ -147,3 +147,30 @@ export const getUPIDetails = async () => {
         throw handleResponse(error.message);
     }
 }
+
+export const sentOTP = async (phone) => {
+    try {
+        const response = await apiClient.post('api/user/send-otp', { phone });
+        return handleResponse(response);
+    } catch (error) {
+        throw handleResponse(error.message);
+    }
+}
+
+export const verifyEmailOTP = async (email) => {
+    try {
+        const response = await apiClient.post('api/user/verify-email-otp', { email });
+        return handleResponse(response);
+    } catch (error) {
+        throw handleResponse(error.message);
+    }
+}
+
+export const resetPassword = async (newPassword, phone) => {
+    try {
+        const response = await apiClient.post('api/user/reset-password', { newPassword, phone });
+        return handleResponse(response);
+    } catch (error) {
+        throw handleResponse(error.message);
+    }
+}

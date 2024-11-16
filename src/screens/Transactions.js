@@ -30,12 +30,12 @@ const Transactions = ({ navigation, route }) => {
             const response = await getUPIDetails();
             if (response.success) {
                 setUPIDetails({
-                    upi_id: response.admin.upi_id,
-                    upi_image: response.admin.upi_image,
+                    upi_id: response?.adminUPI?.upi_id,
+                    upi_image: response?.adminUPI?.upi_image,
                 })
             } else {
                 setAlertType('error');
-                setAlertMessage(response.message);
+                setAlertMessage(response?.message);
                 setAlertVisible(true);
                 return
             }
