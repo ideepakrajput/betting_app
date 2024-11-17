@@ -7,7 +7,7 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getBazaars } from '../services/endPoints';
 import firebase from '@react-native-firebase/app';
 
@@ -53,13 +53,15 @@ const HomeScreen = () => {
     };
 
 
-    useEffect(() => {
-        getBazaarData();
-        const intervalId = setInterval(() => {
+    useFocusEffect(
+        React.useCallback(() => {
             getBazaarData();
-        }, 1 * 60000);
-        return () => clearInterval(intervalId);
-    }, []);
+            const intervalId = setInterval(() => {
+                getBazaarData();
+            }, 1 * 60000);
+            return () => clearInterval(intervalId);
+        }, [])
+    );
 
     const getBazaarData = async () => {
         try {
@@ -190,7 +192,7 @@ const HomeScreen = () => {
                                 <Text style={styles.gameName}>{lastResults[0]?.name}</Text>
                                 {waiting && <Text style={styles.timeInfo}>Betting is closed. Result will announce Soon</Text>}
                             </View>
-                            <Text style={styles.gameResult}>{waiting ? "Wait" : lastResults[0]?.result || 77}</Text>
+                            <Text style={styles.gameResult}>{waiting ? "Wait" : lastResults[0]?.result || " - "}</Text>
                         </View>
                     }
                     {/* ))} */}
@@ -254,7 +256,7 @@ const HomeScreen = () => {
                                     Result: {(game.result_time)}
                                 </Text>
                             </View>
-                            <Text style={styles.gameResult}>{game.result || 77}</Text>
+                            <Text style={styles.gameResult}>{game.result || " - "}</Text>
                         </View>
                     ))}
                 </ScrollView>

@@ -106,6 +106,13 @@ const Transactions = ({ navigation, route }) => {
     }
 
     const handleWithdrawMoney = async () => {
+        const currentHour = new Date().getHours();
+        if (currentHour < 10 || currentHour >= 14) {
+            setAlertVisible(true);
+            setAlertType('error');
+            setAlertMessage('Withdrawal time is between 10 AM to 2 PM only');
+            return;
+        }
         if (!withdrawalAmount) {
             setAlertVisible(true);
             setAlertType('error');
@@ -315,7 +322,7 @@ const Transactions = ({ navigation, route }) => {
                         {/* Available Amount & Withdrawal Time */}
                         <View style={styles.withdrawInfo}>
                             <Text style={styles.availableText}>Available For Withdrawal: ₹ {user?.user?.winning_amount}</Text>
-                            <Text style={styles.timeText}>Withdrawal Time is 10 AM to 4 PM</Text>
+                            <Text style={styles.timeText}>Withdrawal Time is 10 AM to 2 PM</Text>
                         </View>
 
                         {/* Add and Withdraw Money Buttons */}

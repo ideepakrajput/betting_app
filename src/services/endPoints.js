@@ -174,3 +174,12 @@ export const resetPassword = async (newPassword, phone) => {
         throw handleResponse(error.message);
     }
 }
+
+export const getResultHistory = async () => {
+    try {
+        const response = await apiClient.get('api/bazaar/result');
+        return handleResponse(response);
+    } catch (error) {
+        throw handleResponse(error.message);
+    }
+}

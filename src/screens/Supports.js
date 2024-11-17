@@ -67,7 +67,7 @@ const SupportScreen = () => {
                     </View>
 
                     {/* YouTube Video */}
-                    <View>
+                    {/* <View>
                         <YoutubePlayer
                             ref={playerRef}
                             height={300}
@@ -75,7 +75,7 @@ const SupportScreen = () => {
                             videoId={YOUTUBE}
                             onChangeState={onStateChange}
                         />
-                    </View>
+                    </View> */}
                 </ScrollView>
             </View>
         </ImageBackground>

@@ -44,24 +44,28 @@ const CustomHeader = ({ navigation }) => {
 
     return (
         <View style={[styles.header, { backgroundColor: '#222222' }]}>
-            <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-                <AntIcon name="menu-fold" size={24} color="#FFD700" />
-            </TouchableOpacity>
-            <Image
-                source={require('../assets/logo-bg-remove.png')}
-                style={styles.logo}
-            />
-            <TouchableOpacity onPress={() => navigation.navigate('WalletDetails')}>
-                <View style={styles.walletContainer}>
-                    <Icon name="account-balance-wallet" size={24} color="#FFD700" />
-                    <Text style={styles.balanceText}>₹ {user?.user?.wallet_balance}</Text>
-                </View>
-            </TouchableOpacity>
+            <View style={[styles.headerSection, { alignItems: 'flex-start' }]}>
+                <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
+                    <AntIcon name="menu-fold" size={24} color="#FFD700" />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.headerSection}>
+                <Image
+                    source={require('../assets/logo-bg-remove.png')}
+                    style={styles.logo}
+                />
+            </View>
+            <View style={[styles.headerSection, { alignItems: 'flex-end' }]}>
+                <TouchableOpacity onPress={() => navigation.navigate('WalletDetails')}>
+                    <View style={styles.walletContainer}>
+                        <Icon name="account-balance-wallet" size={24} color="#FFD700" />
+                        <Text style={styles.balanceText}>₹ {user?.user?.wallet_balance}</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
         </View>
     );
-};
-
-const CustomTabBar = ({ state, descriptors, navigation }) => (
+}; const CustomTabBar = ({ state, descriptors, navigation }) => (
     <View style={[styles.tabBar, { backgroundColor: '#222222' }]}>
         {state.routes.map((route, index) => {
             const { options } = descriptors[route.key];
@@ -395,10 +399,19 @@ const AppNavigator = () => {
 const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
         padding: 15,
         backgroundColor: '#000000',
+    },
+    headerSection: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    logo: {
+        width: 50,
+        height: 50,
+        resizeMode: 'contain',
     },
     walletContainer: {
         flexDirection: 'row',
@@ -461,11 +474,6 @@ const styles = StyleSheet.create({
         color: '#FFD700',
         fontSize: 16,
         marginLeft: 10,
-    },
-    logo: {
-        width: 50,
-        height: 50,
-        resizeMode: 'contain',
     },
 });
 

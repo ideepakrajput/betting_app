@@ -23,7 +23,7 @@ const Rules = () => {
 
                         <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Minimum Withdrawal: ₹900</Text></Text>
                         <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Maximum Withdrawal per Day: ₹10 Lakhs</Text></Text>
-                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Withdrawal Timing: 10:00 AM to 04:00 PM</Text></Text>
+                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Withdrawal Timing: 10:00 AM to 02:00 PM</Text></Text>
 
                         <Text style={styles.noteText}>NOTE: Only winnings amount can be withdrawn.</Text>
 
