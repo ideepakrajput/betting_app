@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import messaging from '@react-native-firebase/messaging';
 import { Button, Text } from 'react-native-paper';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { ImageBackground, StyleSheet, View } from 'react-native';
@@ -9,7 +7,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getBazaars } from '../services/endPoints';
-import firebase from '@react-native-firebase/app';
 
 const HomeScreen = () => {
     const user = useSelector(state => state.user);
@@ -20,38 +17,6 @@ const HomeScreen = () => {
     const [liveGames, setLiveGames] = useState([]);
     const [upcomingGames, setUpcomingGames] = useState([]);
     const [lastResults, setLastResults] = useState([]);
-
-    async function requestUserPermission() {
-        const authStatus = await messaging().requestPermission();
-        const enabled =
-            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-            authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-        if (enabled) {
-            console.log('Authorization status:', authStatus);
-        }
-    }
-
-    useEffect(() => {
-        requestUserPermission();
-        getToken();
-        const unsubscribe = messaging().onMessage(async remoteMessage => {
-            console.log('A new FCM message arrived!', remoteMessage);
-        });
-        return unsubscribe;
-    }, []);
-
-    const getToken = async () => {
-        let fcmToken = await AsyncStorage.getItem('fcmToken');
-        if (true) {
-            fcmToken = await messaging().getToken();
-            if (fcmToken) {
-                await AsyncStorage.setItem('fcmToken', fcmToken);
-                console.log('FCM Token:', fcmToken);
-            }
-        }
-    };
-
 
     useFocusEffect(
         React.useCallback(() => {
@@ -71,11 +36,14 @@ const HomeScreen = () => {
             const currentTimeString = new Date();
 
             // Helper function to create comparable datetime
-            const createDateTime = (timeStr) => {
+            const createDateTime = (type, timeStr) => {
                 const [hours, minutes] = timeStr.split(':').map(Number);
                 const date = new Date(currentTimeString);
                 // Handle midnight crossing - if hour is less than 12, assume it's next day
                 if (hours < 12) {
+                    date.setDate(date.getDate() + 1);
+                }
+                if (type === "open" && hours >= 23) {
                     date.setDate(date.getDate() + 1);
                 }
                 date.setHours(hours, minutes, 0, 0);
@@ -83,15 +51,15 @@ const HomeScreen = () => {
             };
 
             const categorizedGames = response?.data?.reduce((acc, game) => {
-                const openTime = createDateTime(game.open_time);
-                const closeTime = createDateTime(game.close_time);
-                const resultTime = createDateTime(game.result_time);
+                const openTime = createDateTime("open", game.open_time);
+                const closeTime = createDateTime("close", game.close_time);
+                const resultTime = createDateTime("result", game.result_time);
 
                 if (openTime <= currentTime && closeTime >= currentTime && resultTime >= currentTime) {
                     acc.liveGames.push({ ...game, closeDateTime: closeTime });
                 } else if (currentTime < openTime && closeTime >= currentTime && resultTime >= currentTime) {
                     acc.upcomingGames.push({ ...game, closeDateTime: closeTime });
-                } else if (openTime <= currentTime && closeTime <= currentTime && resultTime <= currentTime) {
+                } else if (openTime <= currentTime && closeTime <= currentTime) {
                     acc.lastResults.push({ ...game, closeDateTime: closeTime });
                 } else if (closeTime < resultTime && resultTime < currentTime) {
                     acc.liveResults.push({ ...game, closeDateTime: closeTime });
@@ -105,8 +73,8 @@ const HomeScreen = () => {
 
             // Sort by open time for upcoming games
             const sortByOpenTime = (a, b) => {
-                const aTime = createDateTime(a.open_time);
-                const bTime = createDateTime(b.open_time);
+                const aTime = createDateTime("open", a.open_time);
+                const bTime = createDateTime("open", b.open_time);
                 return aTime - bTime;
             };
 
@@ -119,10 +87,6 @@ const HomeScreen = () => {
             console.error('Error fetching bazaars:', error);
         }
     };
-
-    if (!firebase.apps.length) {
-        firebase.initializeApp();
-    }
 
     return (
         <View style={styles.container}>

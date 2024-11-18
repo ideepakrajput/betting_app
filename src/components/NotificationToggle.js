@@ -108,18 +108,14 @@ const NotificationToggle = () => {
             await AsyncStorage.setItem('notificationsEnabled', String(newState));
 
             if (newState) {
-                // Get FCM token
-                const token = await messaging().getToken();
-                console.log('FCM Token:', token);
-                // Here you would typically send this token to your backend
-            } else {
-                // Delete the token when notifications are disabled
                 await messaging().deleteToken();
+                const token = await messaging().getToken();
+            } else {
+                await messaging().unsubscribeFromTopic('all');
             }
 
         } catch (error) {
             console.error('Error toggling notifications:', error);
-            // Revert the switch if there was an error
             setIsEnabled(isEnabled);
         }
     };
