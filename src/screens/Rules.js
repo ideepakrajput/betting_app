@@ -29,8 +29,8 @@ const Rules = () => {
 
                         <Text style={styles.header}>Game Rates</Text>
 
-                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Jodi Rate: ₹100 for ₹9,000</Text></Text>
-                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Harup Rate: ₹100 for ₹900</Text></Text>
+                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Jodi Rate: ₹100 for ₹9500</Text></Text>
+                        <Text style={styles.bulletPoint}>• <Text style={styles.greenText}>Harup Rate: ₹100 for ₹950</Text></Text>
 
                         <Text style={styles.footerText}>Shiva Gold DREAM</Text>
                         <Text style={styles.footerText}>Shiva Gold MATKA</Text>
