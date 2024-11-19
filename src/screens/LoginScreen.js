@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import SocialLinks from '../components/ContactDetails';
-import { checkUserWithPhone, login } from '../services/endPoints';
+import { checkUserWithPhone, getContacts, login } from '../services/endPoints';
 import { useDispatch } from 'react-redux';
 import CustomAlert from '../components/CustomAlert';  // Import CustomAlert component
 import { setUser } from '../redux/slices/userSlice';  // Assuming this is the correct action
@@ -17,6 +17,7 @@ const LoginScreen = ({ navigation }) => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertType, setAlertType] = useState('success');
     const [alertMessage, setAlertMessage] = useState('');
+    const [contacts, setContacts] = useState([]);
     // const navigation = useNavigation();
     const dispatch = useDispatch();
 
@@ -29,6 +30,20 @@ const LoginScreen = ({ navigation }) => {
             return () => clearTimeout(timer);  // Clean up timeout if component unmounts or changes
         }
     }, [alertVisible]);
+    useEffect(() => {
+        const fetchContacts = async () => {
+            try {
+                const { contacts } = await getContacts();
+                if (contacts) {
+                    setContacts(contacts);
+                }
+            } catch (error) {
+                console.log('Error fetching contacts:', error);
+            }
+        };
+
+        fetchContacts();
+    }, []);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -199,7 +214,7 @@ const LoginScreen = ({ navigation }) => {
                     Forgot password?
                 </Button>
 
-                <SocialLinks />
+                <SocialLinks contacts={contacts} />
 
                 {/* Custom Alert */}
                 {alertVisible && (

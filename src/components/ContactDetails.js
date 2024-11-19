@@ -4,13 +4,13 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Text } from 'react-native-paper';
 import { PHONE, TELEGRAM } from '../constants';
 
-const SocialLinks = () => {
+const SocialLinks = ({ contacts }) => {
     const openTelegram = () => {
-        Linking.openURL(TELEGRAM).catch(err => console.error('Error opening Telegram:', err));
+        Linking.openURL(`https://t.me/${contacts?.telegram}`).catch(err => console.error('Error opening Telegram:', err));
     };
 
     const openWhatsApp = () => {
-        const whatsappUrl = `https://wa.me/${PHONE}`;
+        const whatsappUrl = `https://wa.me/${contacts?.whatsapp}`;
         Linking.openURL(whatsappUrl).catch(err => console.error('Error opening WhatsApp:', err));
     };
 
@@ -20,12 +20,12 @@ const SocialLinks = () => {
             <View style={styles.iconContainer}>
                 <TouchableOpacity onPress={openTelegram} style={styles.iconWrapper}>
                     <Icon name="telegram" size={40} color="#0088cc" />
-                    <Text style={styles.iconText}>Telegram</Text>
+                    <Text style={styles.iconText}>{contacts?.telegram || "Telegram"}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={openWhatsApp} style={styles.iconWrapper}>
                     <Icon name="whatsapp" size={40} color="#25D366" />
-                    <Text style={styles.iconText}>WhatsApp</Text>
+                    <Text style={styles.iconText}>{contacts?.whatsapp || "WhatsApp"}</Text>
                 </TouchableOpacity>
             </View>
         </View>

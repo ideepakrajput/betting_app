@@ -183,3 +183,12 @@ export const getResultHistory = async () => {
         throw handleResponse(error.message);
     }
 }
+
+export const getContacts = async () => {
+    try {
+        const response = await apiClient.get('api/user/contact');
+        return handleResponse(response);
+    } catch (error) {
+        throw handleResponse(error.message);
+    }
+}

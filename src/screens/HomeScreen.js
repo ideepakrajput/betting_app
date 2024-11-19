@@ -31,50 +31,66 @@ const HomeScreen = () => {
     const getBazaarData = async () => {
         try {
             const response = await getBazaars() || [];
-
             const currentTime = new Date();
-            const currentTimeString = new Date();
 
             // Helper function to create comparable datetime
-            const createDateTime = (type, timeStr) => {
+            const createDateTime = (timeStr) => {
                 const [hours, minutes] = timeStr.split(':').map(Number);
-                const date = new Date(currentTimeString);
-                // Handle midnight crossing - if hour is less than 12, assume it's next day
-                if (hours < 12) {
+                const date = new Date(currentTime);
+
+                // Handle day transition for games that span midnight
+                if (hours < 12 && currentTime.getHours() >= 12) {
                     date.setDate(date.getDate() + 1);
                 }
-                if (type === "open" && hours >= 23) {
-                    date.setDate(date.getDate() + 1);
+                if (hours >= 12 && currentTime.getHours() < 12) {
+                    date.setDate(date.getDate() - 1);
                 }
+
                 date.setHours(hours, minutes, 0, 0);
                 return date;
             };
 
             const categorizedGames = response?.data?.reduce((acc, game) => {
-                const openTime = createDateTime("open", game.open_time);
-                const closeTime = createDateTime("close", game.close_time);
-                const resultTime = createDateTime("result", game.result_time);
+                const openTime = createDateTime(game.open_time);
+                const closeTime = createDateTime(game.close_time);
+                const resultTime = createDateTime(game.result_time);
 
-                if (openTime <= currentTime && closeTime >= currentTime && resultTime >= currentTime) {
-                    acc.liveGames.push({ ...game, closeDateTime: closeTime });
-                } else if (currentTime < openTime && closeTime >= currentTime && resultTime >= currentTime) {
-                    acc.upcomingGames.push({ ...game, closeDateTime: closeTime });
-                } else if (openTime <= currentTime && closeTime <= currentTime) {
-                    acc.lastResults.push({ ...game, closeDateTime: closeTime });
-                } else if (closeTime < resultTime && resultTime < currentTime) {
-                    acc.liveResults.push({ ...game, closeDateTime: closeTime });
-                    setWaiting(true);
+                // Special handling for games crossing midnight
+                if (game.name === "DESAWAR") {
+                    if (closeTime < openTime) {
+                        closeTime.setDate(closeTime.getDate() + 1);
+                    }
+                    if (resultTime < closeTime) {
+                        resultTime.setDate(resultTime.getDate() + 1);
+                    }
                 }
+
+                // Live games: Current time is between open and close time
+                if (currentTime >= openTime && currentTime <= closeTime) {
+                    acc.liveGames.push({ ...game, closeDateTime: closeTime });
+                }
+                // Upcoming games: Current time is before open time
+                else if (currentTime < openTime) {
+                    acc.upcomingGames.push({ ...game, closeDateTime: closeTime });
+                }
+                // Past results: Current time is after result time
+                else if (currentTime > openTime && currentTime > closeTime) {
+                    acc.lastResults.push({ ...game, closeDateTime: closeTime });
+                }
+                // Waiting for results: Current time is between close time and result time
+                else if (currentTime > closeTime && currentTime <= resultTime) {
+                    acc.liveResults.push({ ...game, closeDateTime: closeTime });
+                    // setWaiting(true);
+                }
+
                 return acc;
             }, { liveResults: [], liveGames: [], upcomingGames: [], lastResults: [] });
 
-            // Sort by close time for lastResults
+            // Sort functions remain the same
             const sortByCloseTime = (a, b) => b.closeDateTime - a.closeDateTime;
-
-            // Sort by open time for upcoming games
             const sortByOpenTime = (a, b) => {
-                const aTime = createDateTime("open", a.open_time);
-                const bTime = createDateTime("open", b.open_time);
+                const aTime = createDateTime(a.open_time);
+                const bTime = createDateTime(b.open_time);
                 return aTime - bTime;
             };
 
@@ -154,9 +170,9 @@ const HomeScreen = () => {
                         <View key={lastResults[0]?._id} style={styles.gameCard}>
                             <View>
                                 <Text style={styles.gameName}>{lastResults[0]?.name}</Text>
-                                {waiting && <Text style={styles.timeInfo}>Betting is closed. Result will announce Soon</Text>}
+                                {!(lastResults[0]?.result) && <Text style={styles.timeInfo}>Betting is closed. Result will announce Soon</Text>}
                             </View>
-                            <Text style={styles.gameResult}>{waiting ? "Wait" : lastResults[0]?.result || " - "}</Text>
+                            <Text style={styles.gameResult}>{!(lastResults[0]?.result) ? "Wait" : lastResults[0]?.result || " - "}</Text>
                         </View>
                     }
                     {/* ))} */}

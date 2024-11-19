@@ -1,12 +1,26 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, ScrollView, Linking, ImageBackground } from 'react-native';
 import { Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import { PHONE, TELEGRAM, WHATSAPP, YOUTUBE } from '../constants';
+import { getContacts } from '../services/endPoints';
 
 const SupportScreen = () => {
+
+    const [contacts, setContacts] = useState([]);
+    const getContactsData = async () => {
+        const { contacts } = await getContacts();
+        return contacts;
+    }
+
+    useEffect(() => {
+        getContactsData().then(contacts => {
+            setContacts(contacts);
+        });
+    }, []);
+
     const playerRef = useRef(null);
 
     const onStateChange = useCallback((state) => {
@@ -15,16 +29,16 @@ const SupportScreen = () => {
         }
     }, []);
     const openTelegram = () => {
-        Linking.openURL(TELEGRAM).catch(err => console.error('Error opening Telegram:', err));
+        Linking.openURL(`https://t.me/${contacts?.telegram}`).catch(err => console.error('Error opening Telegram:', err));
     };
 
     const openWhatsApp = () => {
-        const whatsappUrl = `https://wa.me/${WHATSAPP}`;
+        const whatsappUrl = `https://wa.me/${contacts?.whatsapp}`;
         Linking.openURL(whatsappUrl).catch(err => console.error('Error opening WhatsApp:', err));
     };
 
     const openPhone = () => {
-        const phoneUrl = `tel:${PHONE}`;
+        const phoneUrl = `tel:${contacts?.phone}`;
         Linking.openURL(phoneUrl).catch(err => console.error('Error opening phone:', err));
     };
     return (
@@ -47,21 +61,21 @@ const SupportScreen = () => {
                         {/* WhatsApp Support */}
                         <TouchableOpacity style={styles.supportButton} onPress={openWhatsApp}>
                             <Icon name="whatsapp" size={30} color="#25D366" />
-                            <Text style={styles.supportText}>{WHATSAPP}</Text>
+                            <Text style={styles.supportText}>{contacts?.whatsapp}</Text>
                             <Icon name="hand-pointing-left" size={30} color="#FFD700" />
                         </TouchableOpacity>
 
                         {/* Telegram Support */}
                         <TouchableOpacity style={styles.supportButton} onPress={openTelegram}>
                             <FontAwesome name="telegram" size={30} color="#0088cc" />
-                            <Text style={styles.supportText}>Telegram</Text>
+                            <Text style={styles.supportText}>{contacts?.telegram}</Text>
                             <Icon name="hand-pointing-left" size={30} color="#FFD700" />
                         </TouchableOpacity>
 
                         {/* Call Support */}
                         <TouchableOpacity style={styles.supportButton} onPress={openPhone}>
                             <Icon name="phone" size={30} color="#32CD32" />
-                            <Text style={styles.supportText}>{PHONE}</Text>
+                            <Text style={styles.supportText}>{contacts?.phone}</Text>
                             <Icon name="hand-pointing-left" size={30} color="#FFD700" />
                         </TouchableOpacity>
                     </View>
